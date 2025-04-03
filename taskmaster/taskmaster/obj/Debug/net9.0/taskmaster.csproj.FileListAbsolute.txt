@@ -1,0 +1,13 @@
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.deps.json
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.dll
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.pdb
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.csproj.AssemblyReference.cache
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.AssemblyInfoInputs.cache
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.AssemblyInfo.cs
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.csproj.CoreCompileInputs.cache
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\XamlC.stamp
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.dll
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\refint\taskmaster.dll
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.pdb
+C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\ref\taskmaster.dll
