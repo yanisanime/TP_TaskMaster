@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mWyj8ejqGjE=",
+  "dgSpecHash": "VfITFGnM7RY=",
   "success": true,
   "projectFilePath": "C:\\Users\\merie\\Documents\\WEB\\TaskMaster\\TP_TaskMaster\\taskmaster\\taskmaster.Droid\\taskmaster.Droid.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\merie\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\googlegson\\2.11.0.3\\googlegson.2.11.0.3.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.13\\microsoft.entityframeworkcore.8.0.13.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.13\\microsoft.entityframeworkcore.abstractions.8.0.13.nupkg.sha512",

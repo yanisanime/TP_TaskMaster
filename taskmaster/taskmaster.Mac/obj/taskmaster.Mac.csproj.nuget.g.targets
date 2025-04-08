@@ -6,5 +6,6 @@
     <Import Project="$(NuGetPackageRoot)microsoft.maui.resizetizer\9.0.14\buildTransitive\Microsoft.Maui.Resizetizer.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.maui.resizetizer\9.0.14\buildTransitive\Microsoft.Maui.Resizetizer.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.maui.core\9.0.14\buildTransitive\Microsoft.Maui.Core.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.maui.core\9.0.14\buildTransitive\Microsoft.Maui.Core.targets')" />
     <Import Project="$(NuGetPackageRoot)microsoft.maui.controls.build.tasks\9.0.14\buildTransitive\net6.0-maccatalyst13.1\Microsoft.Maui.Controls.Build.Tasks.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.maui.controls.build.tasks\9.0.14\buildTransitive\net6.0-maccatalyst13.1\Microsoft.Maui.Controls.Build.Tasks.targets')" />
+    <Import Project="$(NuGetPackageRoot)communitytoolkit.mvvm\8.4.0\buildTransitive\CommunityToolkit.Mvvm.targets" Condition="Exists('$(NuGetPackageRoot)communitytoolkit.mvvm\8.4.0\buildTransitive\CommunityToolkit.Mvvm.targets')" />
   </ImportGroup>
 </Project>
