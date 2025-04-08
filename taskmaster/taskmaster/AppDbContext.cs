@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,24 @@ namespace taskmaster
             : base(options)
         {
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+                optionsBuilder.UseMySql(
+                    configuration.GetConnectionString("DefaultConnection"),
+                    new MySqlServerVersion(new Version(10, 4, 28))
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors());
+            }
+        }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
