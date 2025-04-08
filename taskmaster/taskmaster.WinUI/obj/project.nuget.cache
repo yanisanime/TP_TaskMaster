@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "HI6LbdE+Zoo=",
+  "dgSpecHash": "UsPqxaBP5Vg=",
   "success": true,
   "projectFilePath": "C:\\Users\\merie\\Documents\\WEB\\TaskMaster\\TP_TaskMaster\\taskmaster\\taskmaster.WinUI\\taskmaster.WinUI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\merie\\.nuget\\packages\\communitytoolkit.mvvm\\8.4.0\\communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.13\\microsoft.entityframeworkcore.8.0.13.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.13\\microsoft.entityframeworkcore.abstractions.8.0.13.nupkg.sha512",
     "C:\\Users\\merie\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\8.0.13\\microsoft.entityframeworkcore.analyzers.8.0.13.nupkg.sha512",
