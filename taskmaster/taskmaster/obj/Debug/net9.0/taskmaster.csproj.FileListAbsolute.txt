@@ -11,3 +11,17 @@ C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\ta
 C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\refint\taskmaster.dll
 C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.pdb
 C:\Users\pourp\source\repos\taskmaster\taskmaster\taskmaster\obj\Debug\net9.0\ref\taskmaster.dll
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.deps.json
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.dll
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\bin\Debug\net9.0\taskmaster.pdb
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.csproj.AssemblyReference.cache
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.AssemblyInfoInputs.cache
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.AssemblyInfo.cs
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.csproj.CoreCompileInputs.cache
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.sourcelink.json
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\XamlC.stamp
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.dll
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\refint\taskmaster.dll
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\taskmaster.pdb
+C:\Users\merie\Documents\WEB\TaskMaster\TP_TaskMaster\taskmaster\taskmaster\obj\Debug\net9.0\ref\taskmaster.dll
