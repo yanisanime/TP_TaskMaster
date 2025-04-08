@@ -17,9 +17,12 @@ public partial class LoginViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool isBusy;
 
+    //Pour empéché l'utilisateur de cliquer plusieurs fois sur le bouton de connexion
     public bool IsNotBusy => !IsBusy;
 
+    //Service d'authentification
     private readonly AuthService _authService;
+
 
     public LoginViewModel()
     {
@@ -39,7 +42,9 @@ public partial class LoginViewModel : ObservableObject
 
             if (isLoggedIn)
             {
-                await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+                //await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}"); //marche pas
+                await Shell.Current.GoToAsync(nameof(DashboardPage));
+
             }
             else
             {
