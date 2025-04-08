@@ -11,4 +11,10 @@ public partial class HomeViewModel : ObservableObject
     {
         await Shell.Current.GoToAsync(nameof(LoginPage));
     }
+
+    [RelayCommand]
+    private async Task GoToCreateAccount()
+    {
+        await Shell.Current.GoToAsync(nameof(CreateAccountPage));
+    }
 }
