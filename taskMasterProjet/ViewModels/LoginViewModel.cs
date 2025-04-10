@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using taskMasterProjet.Services;
 using taskMasterProjet.Views;
 
+
+
 namespace taskMasterProjet.ViewModels;
 
 public partial class LoginViewModel : ObservableObject
@@ -44,33 +46,17 @@ public partial class LoginViewModel : ObservableObject
             // Simulation de connexion sans DB pour tester
             var user = new Utilisateur { Email = Email, Nom = "Test", Prenom = "User" };
             _userSession.Login(user);
-            await Shell.Current.GoToAsync("//DashboardPage");
-
-            // Version réelle avec DB (à décommenter plus tard)
-            // var user = await _authService.LoginAsync(Email, Password);
-            // if (user != null) {
-            //     _userSession.Login(user);
-            //     await Shell.Current.GoToAsync("//DashboardPage");
-            // }
-
-            //var user = await _authService.LoginAsync(Email, Password);
-
-            //if (user != null)
-            //{
-            //    //await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}"); //marche pas
-            //    _userSession.Login(user);
-            //    //await Shell.Current.GoToAsync(nameof(DashboardPage));
-            //    await Shell.Current.GoToAsync("//DashboardPage");
-
-            //}
-            //else
-            //{
-            //    await Shell.Current.DisplayAlert("Erreur", "Email ou mot de passe incorrect", "OK");
-            //}
+            await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task GoBack()
+    {
+        await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
     }
 }

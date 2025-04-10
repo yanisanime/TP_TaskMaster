@@ -25,4 +25,6 @@
         Title="Dashboard"
         ContentTemplate="{DataTemplate views:DashboardPage}"
         Route="DashboardPage" />
+
+
 </Shell>
