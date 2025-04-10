@@ -44,9 +44,23 @@ public partial class CreateAccountViewModel : ObservableObject
         if (IsBusy || string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             return;
 
-        if (Password != ConfirmPassword)
+
+        // Vérifie si un utilisateur existe déjà avec cet email
+        if (await _authService.UserExistsAsync(Email!))
         {
-            await Shell.Current.DisplayAlert("Erreur", "Les mots de passe ne correspondent pas", "OK");
+            await Shell.Current.DisplayAlert("Erreur", "Cet email est déjà utilisé", "OK");
+            return;
+        }
+
+        if (Password != ConfirmPassword || Password.Length <5)
+        {
+            await Shell.Current.DisplayAlert("Erreur", "Les mots de passe ne correspondent pas ou trop court", "OK");
+            return;
+        }
+
+        if(!Email.Contains("@") || !Email.Contains(".")) // Vérifie si l'email est valide
+        {
+            await Shell.Current.DisplayAlert("Erreur", "Email invalide", "OK");
             return;
         }
 

@@ -43,10 +43,22 @@ public partial class LoginViewModel : ObservableObject
         {
             IsBusy = true;
 
-            // Simulation de connexion sans DB pour tester
-            var user = new Utilisateur { Email = Email, Nom = "Test", Prenom = "User" };
-            _userSession.Login(user);
-            await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+            var user = await _authService.LoginAsync(Email, Password);
+
+            if (user != null)
+            {
+                _userSession.Login(user);
+                await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Erreur", "Email ou mot de passe incorrect, ou compte inexistant.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur pendant la connexion : {ex.Message}");
+            await Shell.Current.DisplayAlert("Erreur", "Une erreur est survenue pendant la connexion.", "OK");
         }
         finally
         {
