@@ -45,17 +45,21 @@ public static class MauiProgram
         // Configuration simplifiée sans DB pour tester
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<UserSession>();
+        builder.Services.AddSingleton<TaskService>();
 
         // ViewModels
         builder.Services.AddTransient<HomeViewModel>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<CreateAccountViewModel>();
+        builder.Services.AddTransient<DashboardViewModel>();
+
 
         // Views
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CreateAccountPage>();
         builder.Services.AddTransient<DashboardPage>();
+
 
         return builder.Build();
     }

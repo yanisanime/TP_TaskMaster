@@ -1,12 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:taskMasterProjet.Views.Components"
              x:Class="taskMasterProjet.Views.DashboardPage"
-             Title="Tableau de bord">
+             Title="Dashboard - TaskMaster">
 
-    <VerticalStackLayout Spacing="20" Padding="20" VerticalOptions="Center">
-        <Label Text="Vous êtes connecté !" 
-               FontSize="24"
-               HorizontalOptions="Center"/>
-    </VerticalStackLayout>
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="10">
+        
+        <!-- Header avec infos utilisateur -->
+        <Border Stroke="{StaticResource Primary}" BackgroundColor="{StaticResource Primary}" Padding="10">
+            <HorizontalStackLayout>
+                <Label Text="{Binding CurrentUserDisplayName}" 
+                       FontSize="18" TextColor="White"/>
+                <Button Text="Déconnexion" 
+                        Command="{Binding LogoutCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="White"/>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- Filtres -->
+        <StackLayout Grid.Row="1" Orientation="Horizontal" Spacing="10">
+            <Picker Title="Statut" ItemsSource="{Binding Statuses}"
+                    SelectedItem="{Binding SelectedStatus}"/>
+            <Picker Title="Priorité" ItemsSource="{Binding Priorities}"
+                    SelectedItem="{Binding SelectedPriority}"/>
+        </StackLayout>
+
+        <!-- Liste des tâches -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding FilteredTasks}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <components:TaskItemView />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Bouton Ajouter -->
+        <Button Grid.Row="3" Text="Ajouter une tâche" 
+                Command="{Binding AddTaskCommand}"
+                HorizontalOptions="End"
+                WidthRequest="200"/>
+    </Grid>
 </ContentPage>
