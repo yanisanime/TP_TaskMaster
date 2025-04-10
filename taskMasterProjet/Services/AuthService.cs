@@ -13,6 +13,7 @@ public class AuthService
         _context = context;
     }
 
+    // Enregistre un nouvel utilisateur dans la base de données
     public async Task<bool> RegisterAsync(string nom, string prenom, string email, string password)
     {
         try
@@ -63,6 +64,7 @@ public class AuthService
     }
 
 
+    // Authentifie l'utilisateur avec l'email et le mot de passe fournis
     public async Task<Utilisateur> LoginAsync(string email, string password)
     {
         // Récupère l'utilisateur avec l'email fourni
@@ -73,10 +75,9 @@ public class AuthService
             return user;
         else
             return null;
-
     }
 
-
+    // Vérifie si la connexion à la base de données fonctionne
     public async Task TestConnection()
     {
         try
@@ -92,6 +93,13 @@ public class AuthService
         }
     }
 
+    // Vérifie si l'utilisateur existe déjà dans la base de données
+    public async Task<bool> UserExistsAsync(string email)
+    {
+        return await _context.Utilisateurs.AnyAsync(u => u.Email == email);
+    }
+
+    // Vérifie si la base de données est accessible
     public async Task<bool> CanConnectToDatabase()
     {
         try
