@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 
 namespace taskMasterProjet.Services;
 
@@ -14,23 +15,53 @@ public class AuthService
 
     public async Task<bool> RegisterAsync(string nom, string prenom, string email, string password)
     {
-        // Vérifie si un utilisateur avec cet email existe déjà
-        if (await _context.Utilisateurs.AnyAsync(u => u.Email == email))
-            return false;
-
-        // Crée un nouvel utilisateur avec le mot de passe en clair
-        var user = new Utilisateur
+        try
         {
-            Nom = nom,
-            Prenom = prenom,
-            Email = email,
-            MotDePasse = password // Stocke le mot de passe en clair
-        };
 
-        _context.Utilisateurs.Add(user);
-        await _context.SaveChangesAsync();
-        return true;
+            // Vérifie la connexion d'abord
+            if (!await _context.Database.CanConnectAsync())
+            {
+                await Shell.Current.DisplayAlert("Erreur",
+                    "Impossible de se connecter à la base de données. Vérifiez que MySQL est bien démarré.",
+                    "OK");
+                return false;
+            }
+
+
+            // Vérifie si un utilisateur avec cet email existe déjà
+            if (await _context.Utilisateurs.AnyAsync(u => u.Email == email))
+                return false;
+
+            // Crée un nouvel utilisateur avec le mot de passe en clair
+            var user = new Utilisateur
+            {
+                Nom = nom,
+                Prenom = prenom,
+                Email = email,
+                MotDePasse = password // Stocke le mot de passe en clair
+            };
+
+            _context.Utilisateurs.Add(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Affiche une alerte à l'utilisateur
+            var mainPage = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (mainPage != null)
+            {
+                await mainPage.DisplayAlert("Erreur", "Message d'erreur", "OK");
+            }
+
+            // Affiche un message d'erreur ou log l'exception
+            Console.WriteLine($"Erreur lors de l'enregistrement : {ex.Message}");
+
+            // Vous pouvez également lever une exception personnalisée ou retourner une valeur spécifique
+            return false;
+        }
     }
+
 
     public async Task<Utilisateur> LoginAsync(string email, string password)
     {
@@ -43,5 +74,34 @@ public class AuthService
         else
             return null;
 
+    }
+
+
+    public async Task TestConnection()
+    {
+        try
+        {
+            // Teste une requête simple
+            var userCount = await _context.Utilisateurs.CountAsync();
+            Console.WriteLine($"Connexion réussie! {userCount} utilisateurs trouvés.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur de connexion: {ex.Message}");
+            throw;
+        }
+    }
+
+    public async Task<bool> CanConnectToDatabase()
+    {
+        try
+        {
+            return await _context.Database.CanConnectAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Database connection failed: {ex}");
+            return false;
+        }
     }
 }

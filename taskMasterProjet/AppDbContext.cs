@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,10 @@ public class AppDbContext : DbContext
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
+    {
+    }
+
+    public AppDbContext()
     {
     }
 
@@ -41,6 +46,16 @@ public class AppDbContext : DbContext
     //    }
     //}
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseMySql(
+                "server=localhost;port=3306;database=taskmaster;user=root;password=;",
+                new MySqlServerVersion(new Version(8, 0, 29))
+            );
+        }
+    }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
