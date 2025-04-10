@@ -33,6 +33,9 @@ public partial class DashboardViewModel : ObservableObject
     {
         _userSession = userSession;
         _taskService = taskService;
+
+        SelectedStatus = "Tous";
+        SelectedPriority = "Toutes";
         LoadTasks();
     }
 
@@ -40,7 +43,17 @@ public partial class DashboardViewModel : ObservableObject
     private async Task LoadTasks()
     {
         Tasks = await _taskService.GetUserTasks(_userSession.CurrentUser.Id);
+
+        int nbTasks = Tasks.Count;
+
+        await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{nbTasks}'.", "OK");
+
         ApplyFilters();
+
+        int nbTasksSowed = FilteredTasks.Count;
+
+        await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{nbTasksSowed}'.", "OK");
+
     }
 
     [RelayCommand]
@@ -50,13 +63,15 @@ public partial class DashboardViewModel : ObservableObject
             .Where(t => SelectedStatus == "Tous" || t.Statut == SelectedStatus)
             .Where(t => SelectedPriority == "Toutes" || t.Priorite == SelectedPriority)
             .ToList();
+
+
     }
 
     [RelayCommand]
     private async Task AddTask()
     {
         //await Shell.Current.GoToAsync(nameof(AddTaskPage));
-        await Shell.Current.GoToAsync(nameof(DashboardPage));
+        await Shell.Current.GoToAsync(nameof(AddEditTaskPage));
     }
 
     [RelayCommand]

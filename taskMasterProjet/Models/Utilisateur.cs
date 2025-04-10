@@ -18,7 +18,5 @@ public class Utilisateur
     public ICollection<Tache>? TachesCreees { get; set; }
     public ICollection<Tache>? TachesARealiser { get; set; }
     public ICollection<Commentaire>? Commentaires { get; set; }
-    public ICollection<Projet>? Projets { get; set; }
-
     
 }

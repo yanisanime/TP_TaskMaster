@@ -26,5 +26,8 @@
         ContentTemplate="{DataTemplate views:DashboardPage}"
         Route="DashboardPage" />
 
+    <ShellContent Title="Ajouter/Modifier Tâche"
+              ContentTemplate="{DataTemplate views:AddEditTaskPage}"
+              Route="AddEditTaskPage" />
 
 </Shell>

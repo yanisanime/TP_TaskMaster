@@ -15,6 +15,11 @@ public class TaskService
 
     public async Task<List<Tache>> GetUserTasks(int userId)
     {
+        //await Shell.Current.DisplayAlert("Debug", $"Chargement des tâches pour l'utilisateur :  '{userId}'.", "OK");
+
+        // return await _context.Taches
+        //.Where(t => t.AuteurId == userId || t.RealisateurId == userId)
+        //.ToListAsync();
         return await _context.Taches
             .Include(t => t.Auteur)
             .Include(t => t.Realisateur)
@@ -35,5 +40,16 @@ public class TaskService
         }
     }
 
-    // Ajouter les autres méthodes CRUD ici...
+    public async Task CreateTask(Tache task)
+    {
+        _context.Taches.Add(task);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Utilisateur>> GetTeamMembers(int userId)
+    {
+        return await _context.Utilisateurs
+            .Where(u => u.Id != userId) // Exclure l'utilisateur courant
+            .ToListAsync();
+    }
 }

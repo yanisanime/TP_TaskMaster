@@ -52,6 +52,9 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<CreateAccountViewModel>();
         builder.Services.AddTransient<DashboardViewModel>();
+        builder.Services.AddTransient<AddEditTaskViewModel>();
+
+
 
 
         // Views
@@ -59,6 +62,8 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<CreateAccountPage>();
         builder.Services.AddTransient<DashboardPage>();
+        builder.Services.AddTransient<AddEditTaskPage>();
+
 
 
         return builder.Build();

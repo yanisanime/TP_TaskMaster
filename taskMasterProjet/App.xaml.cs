@@ -16,6 +16,7 @@ public partial class App : Application
         Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
         Routing.RegisterRoute(nameof(CreateAccountPage), typeof(CreateAccountPage));
         Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
+        Routing.RegisterRoute(nameof(AddEditTaskPage), typeof(AddEditTaskPage));
 
     }
 

@@ -4,41 +4,69 @@
              x:Class="taskMasterProjet.Views.DashboardPage"
              Title="Dashboard - TaskMaster">
 
+
+
     <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="10">
+
+        <Button Text="Déconnexion" 
+         Command="{Binding LogoutCommand}"
+         BackgroundColor="Transparent"
+         TextColor="White"/>
         
-        <!-- Header avec infos utilisateur -->
-        <Border Stroke="{StaticResource Primary}" BackgroundColor="{StaticResource Primary}" Padding="10">
-            <HorizontalStackLayout>
+        <!-- Header -->
+        <Border Grid.Row="0" Stroke="{StaticResource Primary}" 
+                BackgroundColor="{StaticResource Primary}" Padding="10">
+            <HorizontalStackLayout Spacing="10">
                 <Label Text="{Binding CurrentUserDisplayName}" 
                        FontSize="18" TextColor="White"/>
-                <Button Text="Déconnexion" 
-                        Command="{Binding LogoutCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="White"/>
+
             </HorizontalStackLayout>
         </Border>
+
 
         <!-- Filtres -->
         <StackLayout Grid.Row="1" Orientation="Horizontal" Spacing="10">
             <Picker Title="Statut" ItemsSource="{Binding Statuses}"
-                    SelectedItem="{Binding SelectedStatus}"/>
+                    SelectedItem="{Binding SelectedStatus}"
+                    WidthRequest="150"/>
             <Picker Title="Priorité" ItemsSource="{Binding Priorities}"
-                    SelectedItem="{Binding SelectedPriority}"/>
+                    SelectedItem="{Binding SelectedPriority}"
+                    WidthRequest="150"/>
         </StackLayout>
 
         <!-- Liste des tâches -->
-        <CollectionView Grid.Row="2" ItemsSource="{Binding FilteredTasks}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <components:TaskItemView />
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <RefreshView Grid.Row="2" 
+                    Command="{Binding LoadTasksCommand}"
+                    IsRefreshing="{Binding IsBusy}">
+            
+            <CollectionView ItemsSource="{Binding FilteredTasks}"
+                           EmptyView="Aucune tâche à afficher">
+                
+                <CollectionView.EmptyViewTemplate>
+                    <DataTemplate>
+                        <Label Text="Aucune tâche trouvée" 
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontAttributes="Italic"/>
+                    </DataTemplate>
+                </CollectionView.EmptyViewTemplate>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <components:TaskItemView Task="{Binding .}"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                
+            </CollectionView>
+            
+        </RefreshView>
 
         <!-- Bouton Ajouter -->
         <Button Grid.Row="3" Text="Ajouter une tâche" 
                 Command="{Binding AddTaskCommand}"
                 HorizontalOptions="End"
-                WidthRequest="200"/>
+                WidthRequest="200"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"/>
     </Grid>
 </ContentPage>
