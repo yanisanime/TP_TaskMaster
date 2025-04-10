@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="taskMasterProjet.Views.HomePage"
+             Title="TaskMaster - Accueil">
+
+    <VerticalStackLayout Spacing="20" Padding="20" VerticalOptions="Center">
+        <Label Text="TaskMaster"
+               FontSize="32"
+               HorizontalOptions="Center"
+               FontAttributes="Bold"/>
+
+        <Button Text="Se connecter"
+                Command="{Binding GoToLoginCommand}"
+                HorizontalOptions="Center"
+                WidthRequest="200"/>
+
+        <Button Text="Créer un compte"
+                Command="{Binding GoToCreateAccountCommand}"
+                HorizontalOptions="Center"
+                WidthRequest="200"/>
+    </VerticalStackLayout>
+</ContentPage>
