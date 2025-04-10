@@ -4,6 +4,12 @@
              Title="Créer un compte">
 
     <VerticalStackLayout Spacing="15" Padding="20">
+        <!-- Bouton Retour en haut -->
+        <Button Text="Retour" 
+                Command="{Binding GoBackCommand}"
+                HorizontalOptions="Start"
+                WidthRequest="100"/>
+
         <Entry Placeholder="Nom" Text="{Binding Nom}"/>
         <Entry Placeholder="Prénom" Text="{Binding Prenom}"/>
         <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email"/>

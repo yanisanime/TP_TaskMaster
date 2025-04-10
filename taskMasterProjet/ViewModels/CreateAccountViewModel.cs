@@ -63,7 +63,8 @@ public partial class CreateAccountViewModel : ObservableObject
             if (success)
             {
                 await Shell.Current.DisplayAlert("Succès", "Compte créé avec succès", "OK");
-                await Shell.Current.GoToAsync(".."); // Retour à la page précédente
+                // On redirige l'utilisateur vers la page d'accueil si la création a marché
+                await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
             }
             else
             {
@@ -74,5 +75,11 @@ public partial class CreateAccountViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task GoBack()
+    {
+        await Shell.Current.GoToAsync($"//{nameof(HomePage)}"); // Retour à la page précédente
     }
 }
