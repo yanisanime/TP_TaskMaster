@@ -1,0 +1,17 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="taskMasterProjet.Views.CreateAccountPage"
+             Title="Créer un compte">
+
+    <VerticalStackLayout Spacing="15" Padding="20">
+        <Entry Placeholder="Nom" Text="{Binding Nom}"/>
+        <Entry Placeholder="Prénom" Text="{Binding Prenom}"/>
+        <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email"/>
+        <Entry Placeholder="Mot de passe" Text="{Binding Password}" IsPassword="True"/>
+        <Entry Placeholder="Confirmer le mot de passe" Text="{Binding ConfirmPassword}" IsPassword="True"/>
+
+        <Button Text="Créer le compte" Command="{Binding CreateAccountCommand}"/>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
+    </VerticalStackLayout>
+</ContentPage>

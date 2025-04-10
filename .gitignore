@@ -1,2 +1,17 @@
-/.vs
-.vs
+## Fichiers générés par l'IDE et le build ##
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+*.vs/
+.vs/
+
+
+
+# NuGet packages  
+*.nupkg  
+packages/  
+
