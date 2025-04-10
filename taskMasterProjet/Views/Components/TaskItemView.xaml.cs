@@ -16,6 +16,11 @@ public partial class TaskItemView : ContentView
     public Tache Task
     {
         get => (Tache)GetValue(TaskProperty);
-        set => SetValue(TaskProperty, value);
+        set
+        {
+            SetValue(TaskProperty, value);
+            BindingContext = value; // pour afficher les données dans le XAML
+        }
     }
+
 }

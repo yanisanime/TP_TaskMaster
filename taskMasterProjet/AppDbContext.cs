@@ -16,7 +16,6 @@ public class AppDbContext : DbContext
     public DbSet<SousTache> SousTaches { get; set; }
     public DbSet<Commentaire> Commentaires { get; set; }
     public DbSet<Etiquette> Etiquettes { get; set; }
-    public DbSet<Projet> Projets { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
@@ -26,25 +25,6 @@ public class AppDbContext : DbContext
     public AppDbContext()
     {
     }
-
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    if (!optionsBuilder.IsConfigured)
-    //    {
-    //        var configuration = new ConfigurationBuilder()
-    //            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-    //            .AddJsonFile("appsettings.json")
-    //            .Build();
-
-    //        optionsBuilder
-    //            .UseMySql(
-    //                configuration.GetConnectionString("DefaultConnection"),
-    //                new MySqlServerVersion(new Version(10, 4, 28))
-    //            )
-    //            .EnableSensitiveDataLogging()
-    //            .EnableDetailedErrors();
-    //    }
-    //}
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -94,19 +74,6 @@ public class AppDbContext : DbContext
             .HasForeignKey(t => t.RealisateurId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // Projet - Tache
-        modelBuilder.Entity<Tache>()
-            .HasOne(t => t.Projet)
-            .WithMany(p => p.Taches)
-            .HasForeignKey(t => t.ProjetId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Utilisateur - Projet
-        modelBuilder.Entity<Projet>()
-            .HasOne(p => p.Createur)
-            .WithMany(u => u.Projets)
-            .HasForeignKey(p => p.CreateurId)
-            .OnDelete(DeleteBehavior.SetNull);
 
         // Commentaire - Utilisateur
         modelBuilder.Entity<Commentaire>()
