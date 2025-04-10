@@ -13,6 +13,11 @@
     <Color x:Key="SecondaryDarkText">#9880e5</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
 
+    <!-- Ajout de mes scouleurs -->
+    <Color x:Key="StatusTodo">#FFA500</Color>
+    <Color x:Key="StatusInProgress">#1E90FF</Color>
+    <Color x:Key="StatusDone">#32CD32</Color>
+
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
