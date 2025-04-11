@@ -3,11 +3,17 @@ using taskMasterProjet.ViewModels;
 
 namespace taskMasterProjet.Views;
 
+//pour la gestion des commentaires et des bouton de supression de commentaire
+public class CommentaireEntry
+{
+    public Entry Commentaire { get; set; }
+    public Button DeleteButton { get; set; }
+}
+
+
 public partial class AddEditTaskPage : ContentPage
 {
-    private List<Entry> _commentEntries = new();
-    private List<Button> _deleteButtons = new();
-
+    private List<CommentaireEntry> _commentEntries = new();
 
     public AddEditTaskPage(AddEditTaskViewModel viewModel)
     {
@@ -18,27 +24,38 @@ public partial class AddEditTaskPage : ContentPage
     private void OnAjouterCommentaireClicked(object sender, EventArgs e)
     {
         var entry = new Entry { Placeholder = "Écrire un commentaire..." };
-        _commentEntries.Add(entry);
-        CommentairesLayout.Children.Add(entry);
-
-        // Ajouter un bouton pour supprimer ce commentaire
         var deleteButton = new Button { Text = "Supprimer" };
         deleteButton.Clicked += OnDeleteCommentaireClicked;
-        _deleteButtons.Add(deleteButton);
+
+        // Créer un objet CommentaireEntry pour lier le Entry et le bouton Delete
+        var commentaireEntry = new CommentaireEntry
+        {
+            Commentaire = entry,
+            DeleteButton = deleteButton
+        };
+
+        // Ajouter à la liste des commentaires
+        _commentEntries.Add(commentaireEntry);
+
+        // Ajouter le champ de texte et le bouton dans l'interface
+        CommentairesLayout.Children.Add(entry);
         CommentairesLayout.Children.Add(deleteButton);
     }
 
     private void OnDeleteCommentaireClicked(object sender, EventArgs e)
     {
-        // Trouver le bouton cliqué et son champ de texte correspondant
+        // Trouver le bouton cliqué
         var button = sender as Button;
-        var entryToDelete = _commentEntries.FirstOrDefault(entry => CommentairesLayout.Children.Contains(entry));
-        if (entryToDelete != null)
+
+        // Chercher le CommentaireEntry qui contient ce bouton
+        var commentaireEntryToDelete = _commentEntries.FirstOrDefault(entry => entry.DeleteButton == button);
+
+        if (commentaireEntryToDelete != null)
         {
-            // Supprimer l'Entry et le bouton
-            _commentEntries.Remove(entryToDelete);
-            CommentairesLayout.Children.Remove(entryToDelete);
-            CommentairesLayout.Children.Remove(button); // Supprimer aussi le bouton associé
+            // Supprimer le commentaire et le bouton associé de l'interface
+            _commentEntries.Remove(commentaireEntryToDelete);
+            CommentairesLayout.Children.Remove(commentaireEntryToDelete.Commentaire);
+            CommentairesLayout.Children.Remove(commentaireEntryToDelete.DeleteButton);
 
             // Mettre à jour la liste des commentaires dans le ViewModel
             TransferCommentairesToViewModel();
@@ -50,15 +67,7 @@ public partial class AddEditTaskPage : ContentPage
         base.OnDisappearing();
 
         // Passer les commentaires au ViewModel
-        //if (BindingContext is AddEditTaskViewModel vm)
-        //{
-        //    vm.CommentaireTextes = _commentEntries
-        //        .Where(e => !string.IsNullOrWhiteSpace(e.Text))
-        //        .Select(e => e.Text!)
-        //        .ToList();
-        //}
         TransferCommentairesToViewModel();
-
     }
 
     public void TransferCommentairesToViewModel()
@@ -66,8 +75,8 @@ public partial class AddEditTaskPage : ContentPage
         if (BindingContext is AddEditTaskViewModel vm)
         {
             vm.CommentaireTextes = _commentEntries
-                .Where(e => !string.IsNullOrWhiteSpace(e.Text))
-                .Select(e => e.Text!)
+                .Where(e => !string.IsNullOrWhiteSpace(e.Commentaire.Text))
+                .Select(e => e.Commentaire.Text!)
                 .ToList();
         }
     }
@@ -81,5 +90,4 @@ public partial class AddEditTaskPage : ContentPage
             await vm.SaveCommand.ExecuteAsync(null);
         }
     }
-
 }
