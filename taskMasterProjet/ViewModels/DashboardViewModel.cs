@@ -65,12 +65,14 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private void ApplyFilters()
     {
+        //On doit faire gaff que les tache ne soit pas null avant de filtrer à cause de OnSelectedStatusChanged
+        if (Tasks == null)
+            return;
+
         FilteredTasks = Tasks
             .Where(t => SelectedStatus == "Tous" || t.Statut == SelectedStatus)
             .Where(t => SelectedPriority == "Toutes" || t.Priorite == SelectedPriority)
             .ToList();
-
-
     }
 
     [RelayCommand]
@@ -121,4 +123,13 @@ public partial class DashboardViewModel : ObservableObject
 
     //pour les filtre 
 
+    partial void OnSelectedStatusChanged(string value)
+    {
+        ApplyFilters();
+    }
+
+    partial void OnSelectedPriorityChanged(string value)
+    {
+        ApplyFilters();
+    }
 }
