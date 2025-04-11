@@ -3,36 +3,66 @@
              xmlns:viewmodels="clr-namespace:taskMasterProjet.ViewModels"
              x:Class="taskMasterProjet.Views.Components.TaskItemView"
              x:Name="root"
-             Padding="10"
-             Margin="5">
-    
-	<Grid BindingContext="{x:Reference root}"
-          ColumnDefinitions="*,Auto"
-          RowDefinitions="Auto,Auto,Auto">
+             Padding="0"
+             Margin="10">
 
-        <Label Text="{Binding Titre}" FontSize="16" FontAttributes="Bold"/>
-        <Label Text="{Binding Statut}"/>
-        <Label Text="{Binding Description}"/>
+    <Border Stroke="#E0E0E0"
+        StrokeThickness="1"
+        BackgroundColor="White"
+        StrokeShape="RoundRectangle 12"
+        Padding="15"
+        >
 
-        <!--<Label Text="{Binding Titre}" FontSize="16" FontAttributes="Bold"
-               Grid.Column="0" Grid.Row="0"/>
+        <VerticalStackLayout Spacing="10">
 
-		<Label Text="{Binding Statut}"
-               Grid.Column="1" Grid.Row="0"
-               TextColor="{Binding Task.Statut, Converter={StaticResource StatusToColorConverter}}"/>
+            <!-- Titre -->
+            <Label Text="{Binding Titre}" 
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#333"/>
 
-		<Label Text="{Binding Description}"
-               Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1"/>-->
+            <!-- Statut & Priorité -->
+            <HorizontalStackLayout Spacing="15">
+                <Label Text="{Binding Statut}" 
+                       FontSize="14"
+                       TextColor="#666"
+                       BackgroundColor="#f2f2f2"
+                       Padding="5"
+                       />
+                <Label Text="{Binding Priorite}" 
+                       FontSize="14"
+                       TextColor="#666"
+                       BackgroundColor="#f2f2f2"
+                       Padding="5"
+                      />
+            </HorizontalStackLayout>
 
-		<HorizontalStackLayout Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Spacing="10">
-			<Button Text="Modifier"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=EditTaskCommand}"
-                    CommandParameter="{Binding Task}"
-                    WidthRequest="100"/>
-			<Button Text="Supprimer"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=DeleteTaskCommand}"
-                    CommandParameter="{Binding Task}"
-                    WidthRequest="100"/>
-		</HorizontalStackLayout>
-	</Grid>
+            <!-- Description -->
+            <Label Text="{Binding Description}" 
+                   FontSize="14"
+                   TextColor="#444"
+                   LineBreakMode="WordWrap"
+                   MaxLines="3"/>
+
+            <!-- Boutons d'action -->
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
+                <Button Text="Modifier"
+                        BackgroundColor="#1976D2"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=EditTaskCommand}"
+                        CommandParameter="{Binding .}"
+                        WidthRequest="100"/>
+
+                <Button Text="Supprimer"
+                        BackgroundColor="#D32F2F"
+                        TextColor="White"
+                        CornerRadius="8"
+                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=DeleteTaskCommand}"
+                        CommandParameter="{Binding .}"
+                        WidthRequest="100"/>
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </Border>
 </ContentView>
