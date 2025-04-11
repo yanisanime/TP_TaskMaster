@@ -49,16 +49,37 @@
                     ItemDisplayBinding="{Binding FullName}"
                     SelectedItem="{Binding SelectedAssignee}"/>
 
+            <!-- Section Commentaires -->
+            <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
+
+            <VerticalStackLayout x:Name="CommentairesLayout" Spacing="10">
+                <!-- Les champs de commentaires seront ajoutés ici dynamiquement -->
+            </VerticalStackLayout>
+
+            <Button Text="Ajouter un commentaire" Clicked="OnAjouterCommentaireClicked" />
+
+
             <!-- Boutons -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                 <Button Text="Annuler" 
                         Command="{Binding CancelCommand}"
                         Grid.Column="0"/>
 
-                <Button Text="Enregistrer" 
+                <!--<Button Text="Enregistrer" 
                         Command="{Binding SaveCommand}"
                         Grid.Column="1"
-                        BackgroundColor="{StaticResource Primary}"/>
+                        BackgroundColor="{StaticResource Primary}"/>-->
+
+                <Button Text="Enregistrer" 
+                    Clicked="OnSaveClicked"
+                    Grid.Column="1"
+                    BackgroundColor="{StaticResource Primary}"/>
+
+
+
+
+
+
             </Grid>
         </VerticalStackLayout>
     </ScrollView>
