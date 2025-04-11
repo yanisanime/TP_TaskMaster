@@ -50,7 +50,7 @@
                         BackgroundColor="#1976D2"
                         TextColor="White"
                         CornerRadius="8"
-                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=EditTaskCommand}"
+                        Command="{Binding Source={x:Reference root}, Path=DashboardViewModel.EditTaskCommand}"
                         CommandParameter="{Binding .}"
                         WidthRequest="100"/>
 
@@ -58,7 +58,7 @@
                         BackgroundColor="#D32F2F"
                         TextColor="White"
                         CornerRadius="8"
-                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DashboardViewModel}}, Path=DeleteTaskCommand}"
+                        Command="{Binding Source={x:Reference root}, Path=DashboardViewModel.DeleteTaskCommand}"
                         CommandParameter="{Binding .}"
                         WidthRequest="100"/>
             </HorizontalStackLayout>
