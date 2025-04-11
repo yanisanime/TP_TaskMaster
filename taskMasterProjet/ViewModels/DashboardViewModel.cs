@@ -45,21 +45,10 @@ public partial class DashboardViewModel : ObservableObject
     {
         Tasks = await _taskService.GetUserTasks(_userSession.CurrentUser.Id);
 
-        // Debug: Vérifiez le contenu de Tasks
-        foreach (var task in Tasks)
-        {
-            Debug.WriteLine($"Tâche trouvée: {task.Titre}, Statut: {task.Statut}");
-        }
-
-        int nbTasks = Tasks.Count;
-
-        await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{nbTasks}'.", "OK");
 
         ApplyFilters();
 
-        int nbTasksSowed = FilteredTasks.Count;
-
-        await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{nbTasksSowed}'.", "OK");
+        // await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{Tasks.lenth}'.", "OK");
 
     }
 
