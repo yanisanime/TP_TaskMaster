@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Diagnostics;
 using taskMasterProjet.Services;
 using taskMasterProjet.Views;
 
@@ -37,19 +36,30 @@ public partial class DashboardViewModel : ObservableObject
 
         SelectedStatus = "Tous";
         SelectedPriority = "Toutes";
-        LoadTasks();
+       // LoadTasks();
     }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    private bool isBusy;
+
+    public bool IsNotBusy => !IsBusy;
+
 
     [RelayCommand]
     private async Task LoadTasks()
     {
-        Tasks = await _taskService.GetUserTasks(_userSession.CurrentUser.Id);
-
-
-        ApplyFilters();
-
-        // await Shell.Current.DisplayAlert("Debug", $"Nombre de tache après filtre :  '{Tasks.lenth}'.", "OK");
-
+        if (IsBusy) return;
+        try
+        {
+            IsBusy = true;
+            Tasks = await _taskService.GetUserTasks(_userSession.CurrentUser.Id);
+            ApplyFilters();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     [RelayCommand]
@@ -105,9 +115,10 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task EditTask(Tache task)
     {
-        //await Shell.Current.DisplayAlert("Debug", $"Modification de la tâche :  '{task.Titre}'.", "OK");
-
-        var parameters = new Dictionary<string, object> { ["Task"] = task };
-        await Shell.Current.GoToAsync(nameof(AddEditTaskPage), parameters);
+        await Shell.Current.GoToAsync($"{nameof(EditTaskPage)}?taskId={task.Id}");
     }
+
+
+    //pour les filtre 
+
 }

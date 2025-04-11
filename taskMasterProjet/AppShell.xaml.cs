@@ -15,6 +15,8 @@ public partial class AppShell : Shell
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(CreateAccountPage), typeof(CreateAccountPage));
             Routing.RegisterRoute(nameof(DashboardPage), typeof(DashboardPage));
+            Routing.RegisterRoute(nameof(EditTaskPage), typeof(EditTaskPage));
+
         }
         catch (Exception ex)
         {
