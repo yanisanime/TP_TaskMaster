@@ -33,6 +33,9 @@
             <Picker Title="Priorité" ItemsSource="{Binding Priorities}"
                     SelectedItem="{Binding SelectedPriority}"
                     WidthRequest="150"/>
+            <Picker Title="Catégorie" ItemsSource="{Binding Categories}"
+                    SelectedItem="{Binding SelectedCategory}"
+                    WidthRequest="100"/>
         </StackLayout>
 
         <!-- Liste des tâches -->

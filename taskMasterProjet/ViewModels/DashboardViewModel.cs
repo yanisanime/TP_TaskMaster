@@ -22,12 +22,17 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string _selectedPriority;
 
+    [ObservableProperty]
+    private string _selectedCategory;
+
     //pour afficher le nom et prénom de l'utilisateur connecté
     public string CurrentUserDisplayName =>
         $"{_userSession.CurrentUser?.Prenom} {_userSession.CurrentUser?.Nom}";
 
     public List<string> Statuses { get; } = new() { "Tous", "À faire", "En cours", "Terminée", "Annulée" };
     public List<string> Priorities { get; } = new() { "Toutes", "Basse", "Moyenne", "Haute", "Critique" };
+    public List<string> Categories { get; } = new() { "Tous", "Perso", "Travail", "Projet" };
+
 
     public DashboardViewModel(UserSession userSession, TaskService taskService)
     {
@@ -36,7 +41,9 @@ public partial class DashboardViewModel : ObservableObject
 
         SelectedStatus = "Tous";
         SelectedPriority = "Toutes";
-       // LoadTasks();
+        SelectedCategory = "Tous";  
+
+        // LoadTasks(); // ne pas l'appeler ici 
     }
 
     [ObservableProperty]
@@ -70,9 +77,10 @@ public partial class DashboardViewModel : ObservableObject
             return;
 
         FilteredTasks = Tasks
-            .Where(t => SelectedStatus == "Tous" || t.Statut == SelectedStatus)
-            .Where(t => SelectedPriority == "Toutes" || t.Priorite == SelectedPriority)
-            .ToList();
+        .Where(t => SelectedStatus == "Tous" || t.Statut == SelectedStatus)
+        .Where(t => SelectedPriority == "Toutes" || t.Priorite == SelectedPriority)
+        .Where(t => SelectedCategory == "Tous" || t.Categorie == SelectedCategory)
+        .ToList();
     }
 
     [RelayCommand]
@@ -129,6 +137,11 @@ public partial class DashboardViewModel : ObservableObject
     }
 
     partial void OnSelectedPriorityChanged(string value)
+    {
+        ApplyFilters();
+    }
+
+    partial void OnSelectedCategoryChanged(string value)
     {
         ApplyFilters();
     }
