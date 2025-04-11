@@ -38,7 +38,17 @@
         <RefreshView Grid.Row="2" 
                     Command="{Binding LoadTasksCommand}"
                     IsRefreshing="{Binding IsBusy}">
-            
+
+            <!--<CollectionView ItemsSource="{Binding FilteredTasks}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        --><!-- Ici, vérifiez que le binding est correct --><!--
+                        <components:TaskItemView Task="{Binding .}"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>-->
+
+
             <CollectionView ItemsSource="{Binding FilteredTasks}"
                            EmptyView="Aucune tâche à afficher">
                 
