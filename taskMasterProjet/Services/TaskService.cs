@@ -39,7 +39,7 @@ public class TaskService
             return;
         }
         //Créé une invite de dialogue pour debug
-        await Shell.Current.DisplayAlert("Debug", $"Suppression de la tâche :  '{task.Description}'.", "OK");
+        //await Shell.Current.DisplayAlert("Debug", $"Suppression de la tâche :  '{task.Description}'.", "OK");
         if (task != null)
         {
             _context.Taches.Remove(task);
