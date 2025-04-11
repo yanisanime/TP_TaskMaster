@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using taskMasterProjet.Services;
 using taskMasterProjet.Views;
 
@@ -23,6 +23,7 @@ public partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string _selectedPriority;
 
+    //pour afficher le nom et prénom de l'utilisateur connecté
     public string CurrentUserDisplayName =>
         $"{_userSession.CurrentUser?.Prenom} {_userSession.CurrentUser?.Nom}";
 
@@ -43,6 +44,12 @@ public partial class DashboardViewModel : ObservableObject
     private async Task LoadTasks()
     {
         Tasks = await _taskService.GetUserTasks(_userSession.CurrentUser.Id);
+
+        // Debug: Vérifiez le contenu de Tasks
+        foreach (var task in Tasks)
+        {
+            Debug.WriteLine($"Tâche trouvée: {task.Titre}, Statut: {task.Statut}");
+        }
 
         int nbTasks = Tasks.Count;
 
