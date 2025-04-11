@@ -1,0 +1,64 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="taskMasterProjet.Views.EditTaskPage"
+             Title="Modifier la tâche">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+            <!-- Titre -->
+            <Entry Placeholder="Titre*" Text="{Binding Task.Titre}"/>
+
+            <!-- Description -->
+            <Editor Placeholder="Description" 
+                   HeightRequest="100"
+                   Text="{Binding Task.Description}"/>
+
+            <!-- Date d'échéance -->
+            <Label Text="Date d'échéance" 
+                   FontSize="14" 
+                   HorizontalOptions="Start"
+                   VerticalOptions="Start"/>
+            <DatePicker MinimumDate="{Binding Task.DateCreation}"
+                        Date="{Binding Task.Echeance}"
+                        Format="dd/MM/yyyy"/>
+
+            <!-- Statut -->
+            <Picker Title="Statut" 
+                    ItemsSource="{Binding Statuses}"
+                    SelectedItem="{Binding Task.Statut}"/>
+
+            <!-- Priorité -->
+            <Picker Title="Priorité" 
+                    ItemsSource="{Binding Priorities}"
+                    SelectedItem="{Binding Task.Priorite}"/>
+
+
+            <!-- Catégorie -->
+            <Picker Title="Catégorie" 
+                    ItemsSource="{Binding Categories}"
+                    SelectedItem="{Binding Task.Categorie}"/>
+
+            <!-- Réalisateur -->
+            <Label Text="Assigner à" 
+                   FontSize="14" 
+                   HorizontalOptions="Start"
+                   VerticalOptions="Start"/>
+            <Picker Title="Assigner à (optionnel)"
+                    ItemsSource="{Binding TeamMembers}"
+                    ItemDisplayBinding="{Binding FullName}"
+                    SelectedItem="{Binding SelectedAssignee}"/>
+
+            <!-- Boutons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Annuler" 
+                        Command="{Binding CancelCommand}"
+                        Grid.Column="0"/>
+
+                <Button Text="Enregistrer" 
+                        Command="{Binding SaveChangesCommand}"
+                        Grid.Column="1"
+                        BackgroundColor="{StaticResource Primary}"/>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

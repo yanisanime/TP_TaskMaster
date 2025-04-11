@@ -59,4 +59,39 @@ public class TaskService
             .Where(u => u.Id != userId) // Exclure l'utilisateur courant
             .ToListAsync();
     }
+
+    public async Task UpdateTask(Tache task)
+    {
+        if (task == null)
+        {
+            
+            return;
+        }
+        _context.Taches.Update(task);
+        await _context.SaveChangesAsync();
+    }
+
+    //fonction pour avoir une tache par son id
+    public async Task<Tache> GetTaskById(int taskId)
+    {
+        ////on affiche dans une boite de dialogue les info de la tache récyupéré
+        //Task t = _context.Taches
+        //    .Include(t => t.Auteur)
+        //    .Include(t => t.Realisateur)
+        //    .Include(t => t.SousTaches)
+        //    .Include(t => t.Commentaires)
+        //    .Include(t => t.Etiquettes)
+        //    .FirstOrDefaultAsync(t => t.Id == taskId);
+
+        //await Shell.Current.DisplayAlert("Debug", $"Chargement de la tâche :  '{taskId}'.", "OK");
+
+
+        return await _context.Taches
+            .Include(t => t.Auteur)
+            .Include(t => t.Realisateur)
+            .Include(t => t.SousTaches)
+            .Include(t => t.Commentaires)
+            .Include(t => t.Etiquettes)
+            .FirstOrDefaultAsync(t => t.Id == taskId);
+    }
 }
