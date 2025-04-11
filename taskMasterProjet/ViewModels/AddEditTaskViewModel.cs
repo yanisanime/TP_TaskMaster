@@ -26,6 +26,11 @@ public partial class AddEditTaskViewModel : ObservableObject
     public List<Utilisateur> TeamMembers { get; private set; } = new();
     public DateTime Today { get; } = DateTime.Today;
 
+
+    //pour la gestion des commentaires
+    public List<string> CommentaireTextes { get; set; } = new();
+
+
     public AddEditTaskViewModel(TaskService taskService, UserSession userSession, AppDbContext context)
     {
         _taskService = taskService;
@@ -76,6 +81,20 @@ public partial class AddEditTaskViewModel : ObservableObject
                 }
 
                 Task.RealisateurId = realisateur.Id;
+            }
+
+
+            // Ajouter les commentaires s'il y en a
+            if (CommentaireTextes.Any())
+            {
+                //pour debug on affiche le nombre de commentaire dans une boite de diloge 
+                await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {CommentaireTextes.Count}", "OK");
+                Task.Commentaires = CommentaireTextes.Select(text => new Commentaire
+                {
+                    Contenu = text,
+                    AuteurId = _userSession.CurrentUser.Id,
+                    Date = DateTime.Now
+                }).ToList();
             }
 
 
