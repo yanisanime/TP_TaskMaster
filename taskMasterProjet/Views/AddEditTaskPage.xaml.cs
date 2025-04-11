@@ -24,8 +24,10 @@ public partial class AddEditTaskPage : ContentPage
     private void OnAjouterCommentaireClicked(object sender, EventArgs e)
     {
         var entry = new Entry { Placeholder = "Écrire un commentaire..." };
-        var deleteButton = new Button { Text = "Supprimer" };
-        deleteButton.Clicked += OnDeleteCommentaireClicked;
+        var deleteButton = new Button { Text = "Supprimer",
+            BackgroundColor = Colors.Red, // Couleur rouge
+                                      };
+            deleteButton.Clicked += OnDeleteCommentaireClicked;
 
         // Créer un objet CommentaireEntry pour lier le Entry et le bouton Delete
         var commentaireEntry = new CommentaireEntry
@@ -81,6 +83,7 @@ public partial class AddEditTaskPage : ContentPage
         }
     }
 
+    /// Appelée lorsque le bouton "Enregistrer" est cliqué pour pouvoir faire des truc avec les commentaire avant de push vers le model
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         TransferCommentairesToViewModel();
