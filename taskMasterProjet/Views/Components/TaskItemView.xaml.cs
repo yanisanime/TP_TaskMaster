@@ -5,6 +5,9 @@ namespace taskMasterProjet.Views.Components;
 
 public partial class TaskItemView : ContentView
 {
+    public static readonly BindableProperty DashboardViewModelProperty =
+    BindableProperty.Create(nameof(DashboardViewModel), typeof(DashboardViewModel), typeof(TaskItemView));
+
     public TaskItemView()
     {
         InitializeComponent();
@@ -22,5 +25,11 @@ public partial class TaskItemView : ContentView
             BindingContext = value; // pour afficher les données dans le XAML
         }
     }
+    public DashboardViewModel DashboardViewModel
+    {
+        get => (DashboardViewModel)GetValue(DashboardViewModelProperty);
+        set => SetValue(DashboardViewModelProperty, value);
+    }
+
 
 }

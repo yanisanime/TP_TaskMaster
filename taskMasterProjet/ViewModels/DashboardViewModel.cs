@@ -88,6 +88,8 @@ public partial class DashboardViewModel : ObservableObject
     [RelayCommand]
     private async Task DeleteTask(Tache task)
     {
+        await Shell.Current.DisplayAlert("Debug", $"Suppression de la tâche :  '{task.Titre}'.", "OK");
+
         bool confirm = await Shell.Current.DisplayAlert(
             "Confirmation",
             $"Voulez-vous vraiment supprimer la tâche '{task.Titre}' ?",
@@ -98,5 +100,14 @@ public partial class DashboardViewModel : ObservableObject
             await _taskService.DeleteTask(task.Id);
             await LoadTasks(); // Recharger la liste
         }
+    }
+
+    [RelayCommand]
+    private async Task EditTask(Tache task)
+    {
+        await Shell.Current.DisplayAlert("Debug", $"Modification de la tâche :  '{task.Titre}'.", "OK");
+
+        var parameters = new Dictionary<string, object> { ["Task"] = task };
+        await Shell.Current.GoToAsync(nameof(AddEditTaskPage), parameters);
     }
 }

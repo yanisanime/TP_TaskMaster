@@ -33,6 +33,13 @@ public class TaskService
     public async Task DeleteTask(int taskId)
     {
         var task = await _context.Taches.FindAsync(taskId);
+        if (task == null)
+        {
+            // Gérer le cas où la tâche n'existe pas
+            return;
+        }
+        //Créé une invite de dialogue pour debug
+        await Shell.Current.DisplayAlert("Debug", $"Suppression de la tâche :  '{task.Description}'.", "OK");
         if (task != null)
         {
             _context.Taches.Remove(task);

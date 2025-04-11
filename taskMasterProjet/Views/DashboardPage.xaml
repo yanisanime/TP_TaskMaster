@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:taskMasterProjet.Views.Components"
              x:Class="taskMasterProjet.Views.DashboardPage"
+             x:Name="PageDashboard"
              Title="Dashboard - TaskMaster">
 
 
@@ -39,15 +40,6 @@
                     Command="{Binding LoadTasksCommand}"
                     IsRefreshing="{Binding IsBusy}">
 
-            <!--<CollectionView ItemsSource="{Binding FilteredTasks}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        --><!-- Ici, vérifiez que le binding est correct --><!--
-                        <components:TaskItemView Task="{Binding .}"/>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>-->
-
 
             <CollectionView ItemsSource="{Binding FilteredTasks}"
                            EmptyView="Aucune tâche à afficher">
@@ -63,7 +55,10 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <components:TaskItemView Task="{Binding .}"/>
+                        <!-- Ici On passe la tache en contexte et le dashboard est dans la prop dédié -->
+                        <!--<components:TaskItemView Task="{Binding .}" DashboardViewModel="{Binding .}" />-->
+                        <components:TaskItemView Task="{Binding .}" DashboardViewModel="{Binding BindingContext, Source={x:Reference Name=PageDashboard}}" />
+
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 
