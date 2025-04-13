@@ -67,6 +67,16 @@ public partial class AddEditTaskPage : ContentPage
         TransferCommentairesToViewModel();
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is AddEditTaskViewModel vm)
+        {
+            await vm.InitializeDataAsync();
+        }
+    }
+
     public void TransferCommentairesToViewModel()
     {
         if (BindingContext is AddEditTaskViewModel vm)

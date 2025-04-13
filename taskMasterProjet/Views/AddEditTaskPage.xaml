@@ -54,10 +54,12 @@
                    FontSize="14" 
                    HorizontalOptions="Start"
                    VerticalOptions="Start"/>
-            <Picker Title="Sélectionner un projet (optionnel)"
+            <Entry Placeholder="Nom d'un projet" Text="{Binding SelectedProjectName}" />
+
+            <!--<Picker Title="Sélectionner un projet (optionnel)"
                     ItemsSource="{Binding Projects}"
                     ItemDisplayBinding="{Binding Nom}"
-                    SelectedItem="{Binding SelectedProject}"/>
+                    SelectedItem="{Binding SelectedProject}"/>-->
 
 
             <!-- Section Commentaires -->
