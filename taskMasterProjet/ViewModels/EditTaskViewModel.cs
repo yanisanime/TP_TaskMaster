@@ -12,6 +12,9 @@ public partial class EditTaskViewModel : ObservableObject
     private readonly UserSession _userSession;
     private readonly AppDbContext _context;
 
+    /// Propriétés pour la gestion des commentaires
+    public List<string> CommentaireTextes { get; set; } = new();
+
 
     [ObservableProperty]
     private string realisateurNom = string.Empty;
@@ -23,14 +26,16 @@ public partial class EditTaskViewModel : ObservableObject
     [ObservableProperty]
     private Tache task;
 
-    public EditTaskViewModel(TaskService taskService)
+    public EditTaskViewModel(TaskService taskService, UserSession userSession, AppDbContext context)
     {
         _taskService = taskService;
+        _userSession = userSession;
+        _context = context;
     }
 
     public void SetTask(Tache task)
     {
-        task = task;
+        Task = task;
     }
 
     [RelayCommand]
@@ -58,9 +63,51 @@ public partial class EditTaskViewModel : ObservableObject
             Task.RealisateurId = realisateur.Id;
         }
 
+        /*GESTION DES COMMENTAIRE*/
+
+
+
+        ////On supprime les ancien commentaire supprimer s'il y en as 
+        //var anciensCommentaires = await _context.Commentaires
+        //    .Where(c => c.TacheId == Task.Id)
+        //    .ToListAsync();
+
+        ////On affiche le nombre de commentaire dans une boite de dialogue pour debug
+        //await Shell.Current.DisplayAlert("Debug", $"Nombre d'ancien commentaires 1 : {anciensCommentaires.Count}", "OK");
+
+        //_context.Commentaires.RemoveRange(anciensCommentaires);
+
+        ////On affiche le nombre de commentaire dans une boite de dialogue pour debug
+        //await Shell.Current.DisplayAlert("Debug", $"Nombre d'ancien commentaires 2 : {anciensCommentaires.Count}", "OK");
+
+        //On affiche le nombre de commentaire dans une boite de dialogue pour debug
+        await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {CommentaireTextes.Count}", "OK");
+
+
+        // ensuite on ajoute les nouveaux commentaires
+        if (CommentaireTextes.Any())
+        {
+            Task.Commentaires = CommentaireTextes
+                .Select(text => new Commentaire
+                {
+                    Contenu = text,
+                    AuteurId = _userSession.CurrentUser.Id,
+                    Date = DateTime.Now,
+                    TacheId = Task.Id // important pour la persistance sinon ça plante mochement !!!!
+                }).ToList();
+        }
+        else
+        {
+            Task.Commentaires = new List<Commentaire>();
+        }
+
 
 
         await _taskService.UpdateTask(task);
+
+        //On met a joure la liste de commentaire dans la base en la netoyant 
+        await _taskService.DeleteAllCommentaireByTacheIdNull();
+
         await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
     }
 

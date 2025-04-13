@@ -48,6 +48,17 @@
                     ItemDisplayBinding="{Binding FullName}"
                     SelectedItem="{Binding SelectedAssignee}"/>
 
+
+            <!-- Section Commentaires -->
+            <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
+
+            <VerticalStackLayout x:Name="CommentairesLayout" Spacing="10">
+                <!-- Les commentaires s'ajouteront ici dynamiquement -->
+            </VerticalStackLayout>
+
+            <Button Text="Ajouter un commentaire" Clicked="OnAjouterCommentaireClicked" />
+
+
             <!-- Boutons -->
             <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                 <Button Text="Annuler" 

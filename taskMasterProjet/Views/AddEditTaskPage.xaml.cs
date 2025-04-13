@@ -1,14 +1,9 @@
 ﻿using Microsoft.Maui.Controls;
 using taskMasterProjet.ViewModels;
+using taskMasterProjet.Services; //pour la classe de gestion de com
 
 namespace taskMasterProjet.Views;
 
-//pour la gestion des commentaires et des bouton de supression de commentaire
-public class CommentaireEntry
-{
-    public Entry Commentaire { get; set; }
-    public Button DeleteButton { get; set; }
-}
 
 
 public partial class AddEditTaskPage : ContentPage
