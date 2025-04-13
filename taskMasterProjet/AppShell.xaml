@@ -33,5 +33,11 @@
     <ShellContent Title="Modifier Tâche"
                   ContentTemplate="{DataTemplate views:EditTaskPage}"
                 Route="EditTaskPage" />
+    
+    <!-- Ajout de la parti sur le projet-->
+    <ShellContent Title="Création Projet"
+              ContentTemplate="{DataTemplate views:CreateProjectPage}"
+            Route="EditTaskPage" />
+    
 
 </Shell>

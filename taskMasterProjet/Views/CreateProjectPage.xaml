@@ -1,0 +1,29 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="taskMasterProjet.Views.CreateProjectPage"
+             Title="Nouveau projet">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+            <!-- Nom -->
+            <Entry Placeholder="Nom du projet*" Text="{Binding Nom}"/>
+
+            <!-- Description -->
+            <Editor Placeholder="Description" 
+                   HeightRequest="100"
+                   Text="{Binding Description}"/>
+
+            <!-- Boutons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Text="Annuler" 
+                        Command="{Binding CancelCommand}"
+                        Grid.Column="0"/>
+
+                <Button Text="Créer" 
+                        Command="{Binding CreateProjectCommand}"
+                        Grid.Column="1"
+                        BackgroundColor="{StaticResource Primary}"/>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

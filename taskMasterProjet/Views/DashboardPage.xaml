@@ -70,11 +70,18 @@
         </RefreshView>
 
         <!-- Bouton Ajouter -->
-        <Button Grid.Row="3" Text="Ajouter une tâche" 
-                Command="{Binding AddTaskCommand}"
-                HorizontalOptions="End"
-                WidthRequest="200"
-                BackgroundColor="{StaticResource Primary}"
-                TextColor="White"/>
+        <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="10">
+            <Button Text="Ajouter une tâche" 
+            Command="{Binding AddTaskCommand}"
+            Grid.Column="0"
+            BackgroundColor="{StaticResource Primary}"
+            TextColor="White"/>
+
+            <Button Text="Créer un projet" 
+            Command="{Binding AddProjectCommand}"
+            Grid.Column="1"
+            BackgroundColor="{StaticResource Secondary}"
+            TextColor="White"/>
+        </Grid>
     </Grid>
 </ContentPage>

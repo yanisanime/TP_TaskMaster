@@ -8,6 +8,7 @@ namespace taskMasterProjet.ViewModels;
 public partial class AddEditTaskViewModel : ObservableObject
 {
     private readonly TaskService _taskService;
+    private readonly ProjetService _projetService;
     private readonly UserSession _userSession;
     private readonly AppDbContext _context;
 
@@ -20,6 +21,14 @@ public partial class AddEditTaskViewModel : ObservableObject
     [ObservableProperty]
     private string realisateurNom = string.Empty;
 
+    //pour la gestion de projet
+    [ObservableProperty]
+    private Projet _selectedProject;
+
+    //liste de projets pour l'affichage des possibilité
+    public List<Projet> Projects { get; private set; } = new();
+
+
     public List<string> Statuses { get; } = new() { "À faire", "En cours", "Terminée", "Annulée" };
     public List<string> Priorities { get; } = new() { "Basse", "Moyenne", "Haute", "Critique" };
     public List<string> Categories { get; } = new() { "Perso", "Travail", "Projet" };
@@ -31,18 +40,23 @@ public partial class AddEditTaskViewModel : ObservableObject
     public List<string> CommentaireTextes { get; set; } = new();
 
 
-    public AddEditTaskViewModel(TaskService taskService, UserSession userSession, AppDbContext context)
+    public AddEditTaskViewModel(TaskService taskService, UserSession userSession, AppDbContext context, ProjetService projetService)
     {
         _taskService = taskService;
         _userSession = userSession;
         _context = context;
+        _projetService = projetService;
         InitializeData();
+        _projetService = projetService;
     }
 
     private async void InitializeData()
     {
         // Charger les membres de l'équipe (exemple simple)
         TeamMembers = await _context.Utilisateurs.ToListAsync();
+
+        Projects = await _projetService.GetUserProjects(_userSession.CurrentUser.Id);
+
 
         // Valeurs par défaut
         Task.Statut = "À faire";
@@ -97,6 +111,12 @@ public partial class AddEditTaskViewModel : ObservableObject
                 }).ToList();
             }
 
+
+            // Associer le projet sélectionné
+            if (SelectedProject != null)
+            {
+                Task.ProjetId = SelectedProject.Id;
+            }
 
 
             // Sauvegarde

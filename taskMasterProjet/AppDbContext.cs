@@ -17,6 +17,8 @@ public class AppDbContext : DbContext
     public DbSet<Commentaire> Commentaires { get; set; }
     public DbSet<Etiquette> Etiquettes { get; set; }
 
+    public DbSet<Projet> Projets { get; set; }
+
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
@@ -95,6 +97,21 @@ public class AppDbContext : DbContext
             .WithMany(t => t.SousTaches)
             .HasForeignKey(st => st.TacheId)
             .OnDelete(DeleteBehavior.Cascade);
+
+
+        // Relation Projet - Utilisateur (Createur)
+        modelBuilder.Entity<Projet>()
+            .HasOne(p => p.Createur)
+            .WithMany()
+            .HasForeignKey(p => p.CreateurId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Relation Projet - Tache
+        modelBuilder.Entity<Tache>()
+            .HasOne(t => t.Projet)
+            .WithMany(p => p.Taches)
+            .HasForeignKey(t => t.ProjetId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
 
