@@ -30,6 +30,14 @@ public partial class EditTaskPage : ContentPage
         LoadCommentaires();
     }
 
+    protected override async void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        // Passer les commentaires au ViewModel
+        TransferCommentairesToViewModel();
+    }
+
     // Ajouter un commentaire
     private void OnAjouterCommentaireClicked(object sender, EventArgs e)
     {
@@ -62,24 +70,28 @@ public partial class EditTaskPage : ContentPage
 
     private void OnDeleteCommentaireClicked(object sender, EventArgs e)
     {
-        // Trouver le bouton cliqué
         var button = sender as Button;
-
-        // Chercher le CommentaireEntry qui contient ce bouton
         var commentaireEntryToDelete = _commentEntries.FirstOrDefault(entry => entry.DeleteButton == button);
 
         if (commentaireEntryToDelete != null)
         {
-            // Supprimer le commentaire et le bouton associé de l'interface
+            // Si c'est un commentaire existant (a un Id), on le marque pour suppression
+            if (commentaireEntryToDelete.Commentaire.BindingContext is Commentaire existingComment)
+            {
+                if (BindingContext is EditTaskViewModel vm)
+                {
+                    vm.CommentairesToDelete ??= new List<Commentaire>();
+                    vm.CommentairesToDelete.Add(existingComment);
+                }
+            }
+
             _commentEntries.Remove(commentaireEntryToDelete);
             CommentairesLayout.Children.Remove(commentaireEntryToDelete.Commentaire);
             CommentairesLayout.Children.Remove(commentaireEntryToDelete.DeleteButton);
 
-            // Mettre à jour la liste des commentaires dans le ViewModel
             TransferCommentairesToViewModel();
         }
     }
-
 
     public void TransferCommentairesToViewModel()
     {
@@ -89,26 +101,20 @@ public partial class EditTaskPage : ContentPage
                 .Where(e => !string.IsNullOrWhiteSpace(e.Commentaire.Text))
                 .Select(e => e.Commentaire.Text!)
                 .ToList();
-          //  await Shell.Current.DisplayAlert("Debug", $"Commentaires transférés : {vm.CommentaireTextes.Count}", "OK");
-
         }
-
     }
 
     /// Appelée lorsque le bouton "Enregistrer" est cliqué pour pouvoir faire des truc avec les commentaire avant de push vers le model
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         TransferCommentairesToViewModel();
-        await Task.Delay(100); //pour laisser le temps à la mise à jour de se faire
 
         if (BindingContext is EditTaskViewModel vm)
         {
             await vm.SaveChangesCommand.ExecuteAsync(null);
         }
-
-        TransferCommentairesToViewModel();
     }
-
+    
     //méthode pour charger les commentaires 
     private void LoadCommentaires()
     {
@@ -120,6 +126,8 @@ public partial class EditTaskPage : ContentPage
             foreach (var commentaire in vm.Task.Commentaires)
             {
                 var entry = new Entry { Text = commentaire.Contenu };
+                entry.BindingContext = commentaire; // pour lier le commentaire à l'entrée
+
                 var deleteButton = new Button
                 {
                     Text = "Supprimer",

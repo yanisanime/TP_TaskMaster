@@ -117,7 +117,7 @@ public class TaskService
         var commentaires = await _context.Commentaires
             .Where(c => c.TacheId == null)
             .ToListAsync();
-        await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {commentaires.Count}", "OK");
+        await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires supprimer à cause de null : {commentaires.Count}", "OK");
         _context.Commentaires.RemoveRange(commentaires);
         await _context.SaveChangesAsync();
     }
