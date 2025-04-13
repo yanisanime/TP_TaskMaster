@@ -12,8 +12,18 @@ public partial class EditTaskViewModel : ObservableObject
     private readonly UserSession _userSession;
     private readonly AppDbContext _context;
 
+    [ObservableProperty]
+    private Utilisateur? _selectedAssignee; // Utilisateur assigné à la tâche
+
+    public int UserId => _userSession.CurrentUser.Id;
+
+
+
+
     /// Propriétés pour la gestion des commentaires
     public List<string> CommentaireTextes { get; set; } = new();
+
+    public List<Commentaire> CommentairesToDelete { get; set; }
 
 
     [ObservableProperty]
@@ -31,6 +41,8 @@ public partial class EditTaskViewModel : ObservableObject
         _taskService = taskService;
         _userSession = userSession;
         _context = context;
+
+
     }
 
     public void SetTask(Tache task)
@@ -41,72 +53,63 @@ public partial class EditTaskViewModel : ObservableObject
     [RelayCommand]
     private async Task SaveChanges()
     {
-        // Validation titre
         if (string.IsNullOrWhiteSpace(Task.Titre))
         {
             await Shell.Current.DisplayAlert("Erreur", "Le titre est obligatoire", "OK");
             return;
         }
 
-        // Vérification du réalisateur si un nom est saisi
-        if (!string.IsNullOrWhiteSpace(realisateurNom))
-        {
-            var realisateur = await _context.Utilisateurs
-                .FirstOrDefaultAsync(u => u.Nom == realisateurNom);
+        // Charger tous les commentaires liés à la tâche
+        var commentairesExistants = await _context.Commentaires
+            .Where(c => c.TacheId == Task.Id)
+            .ToListAsync();
 
-            if (realisateur == null)
+
+        //poru chaque commentaire on affiche une fenetre de dialogue avec le contenu pour debug
+        foreach (var commentaire in commentairesExistants)
+        {
+            await Shell.Current.DisplayAlert("Debug", $"Commentaire : {commentaire.Contenu}", "OK");
+        }
+
+        // Supprimer les commentaires marqués pour suppression
+        if (CommentairesToDelete != null && CommentairesToDelete.Any())
+        {
+            foreach (var commentaire in CommentairesToDelete)
             {
-                await Shell.Current.DisplayAlert("Erreur", $"Aucun utilisateur nommé '{realisateurNom}' n'existe. Veuillez corriger.", "OK");
-                return;
-            }
-
-            Task.RealisateurId = realisateur.Id;
-        }
-
-        /*GESTION DES COMMENTAIRE*/
-
-
-
-        ////On supprime les ancien commentaire supprimer s'il y en as 
-        //var anciensCommentaires = await _context.Commentaires
-        //    .Where(c => c.TacheId == Task.Id)
-        //    .ToListAsync();
-
-        ////On affiche le nombre de commentaire dans une boite de dialogue pour debug
-        //await Shell.Current.DisplayAlert("Debug", $"Nombre d'ancien commentaires 1 : {anciensCommentaires.Count}", "OK");
-
-        //_context.Commentaires.RemoveRange(anciensCommentaires);
-
-        ////On affiche le nombre de commentaire dans une boite de dialogue pour debug
-        //await Shell.Current.DisplayAlert("Debug", $"Nombre d'ancien commentaires 2 : {anciensCommentaires.Count}", "OK");
-
-        //On affiche le nombre de commentaire dans une boite de dialogue pour debug
-        await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {CommentaireTextes.Count}", "OK");
-
-
-        // ensuite on ajoute les nouveaux commentaires
-        if (CommentaireTextes.Any())
-        {
-            Task.Commentaires = CommentaireTextes
-                .Select(text => new Commentaire
+                var commentaireSuivi = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
+                if (commentaireSuivi != null)
                 {
-                    Contenu = text,
-                    AuteurId = _userSession.CurrentUser.Id,
-                    Date = DateTime.Now,
-                    TacheId = Task.Id // important pour la persistance sinon ça plante mochement !!!!
-                }).ToList();
+                    _context.Commentaires.Remove(commentaireSuivi);
+                }
+            }
         }
-        else
+
+        // Mettre à jour ou ajouter les commentaires
+        foreach (var commentaire in Task.Commentaires)
         {
-            Task.Commentaires = new List<Commentaire>();
+            // On vérif d'abord si le commentaire existe déjà dans la base de données
+            var commentaireDansDb = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
+
+            if (commentaireDansDb != null)
+            {
+                await Shell.Current.DisplayAlert("Erreur", "Le commentaire exite déjà", "OK");
+                //mise à jour des commentaires existants
+                commentaireDansDb.Contenu = commentaire.Contenu;
+                commentaireDansDb.Date = DateTime.Now;
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Erreur", "Ajout d'un commentaire nouveau", "OK");
+                // Ajout des nouveaux commentaires
+                commentaire.TacheId = Task.Id;
+                commentaire.AuteurId = _userSession.CurrentUser.Id;
+                commentaire.Date = DateTime.Now;
+                _context.Commentaires.Add(commentaire);
+            }
         }
 
-
-
-        await _taskService.UpdateTask(task);
-
-        //On met a joure la liste de commentaire dans la base en la netoyant 
-        await _taskService.DeleteAllCommentaireByTacheIdNull();
+        await _taskService.UpdateTask(Task);
+        await _context.SaveChangesAsync(); // Important ici car tu manipules directement le contexte
 
         await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
     }
