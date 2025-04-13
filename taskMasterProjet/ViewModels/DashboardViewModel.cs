@@ -145,4 +145,11 @@ public partial class DashboardViewModel : ObservableObject
     {
         ApplyFilters();
     }
+
+    [RelayCommand]
+    private async Task AddProject()
+    {
+        await Shell.Current.GoToAsync(nameof(CreateProjectPage));
+    }
+
 }

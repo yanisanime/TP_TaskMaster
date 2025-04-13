@@ -24,6 +24,10 @@ public class Tache
     public int? RealisateurId { get; set; }
     public Utilisateur? Realisateur { get; set; }
 
+    public int? ProjetId { get; set; }
+    public Projet? Projet { get; set; }
+
+
     // Relations
     public ICollection<SousTache>? SousTaches { get; set; }
     public ICollection<Commentaire>? Commentaires { get; set; }

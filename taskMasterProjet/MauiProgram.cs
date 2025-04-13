@@ -46,6 +46,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<UserSession>();
         builder.Services.AddSingleton<TaskService>();
+        builder.Services.AddSingleton<ProjetService>();
 
         // ViewModels
         builder.Services.AddTransient<HomeViewModel>();
@@ -54,6 +55,7 @@ public static class MauiProgram
         builder.Services.AddTransient<DashboardViewModel>();
         builder.Services.AddTransient<AddEditTaskViewModel>();
         builder.Services.AddTransient<EditTaskViewModel>();
+        builder.Services.AddTransient<CreateProjectViewModel>();
 
         // Views
         builder.Services.AddTransient<HomePage>();
@@ -62,6 +64,7 @@ public static class MauiProgram
         builder.Services.AddTransient<DashboardPage>();
         builder.Services.AddTransient<AddEditTaskPage>();
         builder.Services.AddTransient<EditTaskPage>();
+        builder.Services.AddTransient<CreateProjectPage>();
 
 
         return builder.Build();

@@ -49,6 +49,17 @@
                     ItemDisplayBinding="{Binding FullName}"
                     SelectedItem="{Binding SelectedAssignee}"/>
 
+            <!-- Projet associé -->
+            <Label Text="Projet associé" 
+                   FontSize="14" 
+                   HorizontalOptions="Start"
+                   VerticalOptions="Start"/>
+            <Picker Title="Sélectionner un projet (optionnel)"
+                    ItemsSource="{Binding Projects}"
+                    ItemDisplayBinding="{Binding Nom}"
+                    SelectedItem="{Binding SelectedProject}"/>
+
+
             <!-- Section Commentaires -->
             <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
 
