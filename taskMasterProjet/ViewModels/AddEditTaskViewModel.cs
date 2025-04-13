@@ -23,10 +23,8 @@ public partial class AddEditTaskViewModel : ObservableObject
 
     //pour la gestion de projet
     [ObservableProperty]
-    private Projet _selectedProject;
+    private string selectedProjectName = string.Empty;
 
-    //liste de projets pour l'affichage des possibilité
-    public List<Projet> Projects { get; private set; } = new();
 
 
     public List<string> Statuses { get; } = new() { "À faire", "En cours", "Terminée", "Annulée" };
@@ -46,16 +44,15 @@ public partial class AddEditTaskViewModel : ObservableObject
         _userSession = userSession;
         _context = context;
         _projetService = projetService;
-        InitializeData();
         _projetService = projetService;
+        InitializeDataAsync();
     }
 
-    private async void InitializeData()
+    public async Task InitializeDataAsync()
     {
         // Charger les membres de l'équipe (exemple simple)
-        TeamMembers = await _context.Utilisateurs.ToListAsync();
-
-        Projects = await _projetService.GetUserProjects(_userSession.CurrentUser.Id);
+        //TeamMembers = await _context.Utilisateurs.ToListAsync();
+        //OnPropertyChanged(nameof(TeamMembers));
 
 
         // Valeurs par défaut
@@ -113,11 +110,16 @@ public partial class AddEditTaskViewModel : ObservableObject
 
 
             // Associer le projet sélectionné
-            if (SelectedProject != null)
+            if (!string.IsNullOrWhiteSpace(SelectedProjectName))
             {
-                Task.ProjetId = SelectedProject.Id;
+                var projet = await _projetService.GetProjectByName(SelectedProjectName);
+                if (projet == null)
+                {
+                    await Shell.Current.DisplayAlert("Erreur", $"Le projet '{SelectedProjectName}' n'existe pas.", "OK");
+                    return;
+                }
+                Task.ProjetId = projet.Id;
             }
-
 
             // Sauvegarde
             await _taskService.CreateTask(Task);
