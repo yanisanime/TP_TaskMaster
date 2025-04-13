@@ -88,7 +88,7 @@ public partial class AddEditTaskViewModel : ObservableObject
             if (CommentaireTextes.Any())
             {
                 //pour debug on affiche le nombre de commentaire dans une boite de diloge 
-                await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {CommentaireTextes.Count}", "OK");
+                //await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {CommentaireTextes.Count}", "OK");
                 Task.Commentaires = CommentaireTextes.Select(text => new Commentaire
                 {
                     Contenu = text,

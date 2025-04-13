@@ -86,12 +86,39 @@ public class TaskService
         //await Shell.Current.DisplayAlert("Debug", $"Chargement de la tâche :  '{taskId}'.", "OK");
 
 
-        return await _context.Taches
+        //return await _context.Taches
+        //    .Include(t => t.Auteur)
+        //    .Include(t => t.Realisateur)
+        //    .Include(t => t.SousTaches)
+        //    .Include(t => t.Commentaires)
+        //    .Include(t => t.Etiquettes)
+        //    .FirstOrDefaultAsync(t => t.Id == taskId);
+
+        // Je fais ça pour géré le cas ou il y a un problème de null
+        var task = await _context.Taches
             .Include(t => t.Auteur)
             .Include(t => t.Realisateur)
             .Include(t => t.SousTaches)
             .Include(t => t.Commentaires)
             .Include(t => t.Etiquettes)
             .FirstOrDefaultAsync(t => t.Id == taskId);
+
+        if (task == null)
+        {
+            return null; 
+        }
+
+        return task;
+    }
+
+    //Fonction pour supprimer tous les commentaire de la base qui ont un TasheId = NULL
+    public async Task DeleteAllCommentaireByTacheIdNull()
+    {
+        var commentaires = await _context.Commentaires
+            .Where(c => c.TacheId == null)
+            .ToListAsync();
+        await Shell.Current.DisplayAlert("Debug", $"Nombre de commentaires : {commentaires.Count}", "OK");
+        _context.Commentaires.RemoveRange(commentaires);
+        await _context.SaveChangesAsync();
     }
 }
