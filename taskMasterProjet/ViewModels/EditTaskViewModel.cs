@@ -73,119 +73,125 @@ public partial class EditTaskViewModel : ObservableObject
             return;
         }
 
-        // Charger tous les commentaires liés à la tâche
-        var commentairesExistants = await _context.Commentaires
+
+        try
+        {
+            // Charger la tâche depuis la base pour éviter les problèmes de suivi
+            var taskToUpdate = await _context.Taches
+                .Include(t => t.Commentaires)
+                .Include(t => t.Etiquettes)
+                .FirstOrDefaultAsync(t => t.Id == Task.Id);
+
+            if (taskToUpdate == null) return;
+
+            // Mettre à jour les propriétés de base
+            taskToUpdate.Titre = Task.Titre;
+            taskToUpdate.Description = Task.Description;
+            taskToUpdate.Echeance = Task.Echeance;
+            taskToUpdate.Statut = Task.Statut;
+            taskToUpdate.Priorite = Task.Priorite;
+            taskToUpdate.Categorie = Task.Categorie;
+            taskToUpdate.RealisateurId = Task.RealisateurId;
+            taskToUpdate.ProjetId = Task.ProjetId;
+
+
+            // Charger tous les commentaires liés à la tâche
+            var commentairesExistants = await _context.Commentaires
             .Where(c => c.TacheId == Task.Id)
             .ToListAsync();
 
 
-        //poru chaque commentaire on affiche une fenetre de dialogue avec le contenu pour debug
-        foreach (var commentaire in commentairesExistants)
-        {
-            await Shell.Current.DisplayAlert("Debug", $"Commentaire : {commentaire.Contenu}", "OK");
-        }
-
-        // Supprimer les commentaires marqués pour suppression
-        if (CommentairesToDelete != null && CommentairesToDelete.Any())
-        {
-            foreach (var commentaire in CommentairesToDelete)
+            //poru chaque commentaire on affiche une fenetre de dialogue avec le contenu pour debug
+            foreach (var commentaire in commentairesExistants)
             {
-                var commentaireSuivi = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
-                if (commentaireSuivi != null)
+                await Shell.Current.DisplayAlert("Debug", $"Commentaire : {commentaire.Contenu}", "OK");
+            }
+
+            // Supprimer les commentaires marqués pour suppression
+            if (CommentairesToDelete != null && CommentairesToDelete.Any())
+            {
+                foreach (var commentaire in CommentairesToDelete)
                 {
-                    _context.Commentaires.Remove(commentaireSuivi);
+                    var commentaireSuivi = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
+                    if (commentaireSuivi != null)
+                    {
+                        _context.Commentaires.Remove(commentaireSuivi);
+                    }
                 }
             }
-        }
 
-        // Mettre à jour ou ajouter les commentaires
-        foreach (var commentaire in Task.Commentaires)
+            // Mettre à jour ou ajouter les commentaires
+            foreach (var commentaire in Task.Commentaires)
+            {
+                // On vérif d'abord si le commentaire existe déjà dans la base de données
+                var commentaireDansDb = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
+
+                if (commentaireDansDb != null)
+                {
+                    await Shell.Current.DisplayAlert("Erreur", "Le commentaire exite déjà", "OK");
+                    //mise à jour des commentaires existants
+                    commentaireDansDb.Contenu = commentaire.Contenu;
+                    commentaireDansDb.Date = DateTime.Now;
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Erreur", "Ajout d'un commentaire nouveau", "OK");
+                    // Ajout des nouveaux commentaires
+                    commentaire.TacheId = Task.Id;
+                    commentaire.AuteurId = _userSession.CurrentUser.Id;
+                    commentaire.Date = DateTime.Now;
+                    _context.Commentaires.Add(commentaire);
+                }
+            }
+
+
+            // Projet
+            if (SelectedProjet != null)
+            {
+                Task.ProjetId = SelectedProjet.Id;
+            }
+
+            // Gestion des étiquettes
+            if (!string.IsNullOrWhiteSpace(EtiquetteInput))
+            {
+                // Détacher toutes les anciennes étiquettes
+                taskToUpdate.Etiquettes.Clear();
+
+                var nomsEtiquettes = EtiquetteInput
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(n => n.Trim().ToLower())
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .Distinct();
+
+                foreach (var nom in nomsEtiquettes)
+                {
+                    // Vérifier si l'étiquette existe déjà en base
+                    var etiquetteExistante = await _context.Etiquettes
+                        .FirstOrDefaultAsync(e => e.Nom.ToLower() == nom);
+
+                    if (etiquetteExistante != null)
+                    {
+                        // Si elle existe, l'ajouter via son ID
+                        taskToUpdate.Etiquettes.Add(etiquetteExistante);
+                    }
+                    else
+                    {
+                        // Si elle n'existe pas, créer une nouvelle étiquette
+                        var nouvelleEtiquette = new Etiquette { Nom = nom };
+                        _context.Etiquettes.Add(nouvelleEtiquette);
+                        taskToUpdate.Etiquettes.Add(nouvelleEtiquette);
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
+        }
+        catch (Exception ex)
         {
-            // On vérif d'abord si le commentaire existe déjà dans la base de données
-            var commentaireDansDb = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
-
-            if (commentaireDansDb != null)
-            {
-                await Shell.Current.DisplayAlert("Erreur", "Le commentaire exite déjà", "OK");
-                //mise à jour des commentaires existants
-                commentaireDansDb.Contenu = commentaire.Contenu;
-                commentaireDansDb.Date = DateTime.Now;
-            }
-            else
-            {
-                await Shell.Current.DisplayAlert("Erreur", "Ajout d'un commentaire nouveau", "OK");
-                // Ajout des nouveaux commentaires
-                commentaire.TacheId = Task.Id;
-                commentaire.AuteurId = _userSession.CurrentUser.Id;
-                commentaire.Date = DateTime.Now;
-                _context.Commentaires.Add(commentaire);
-            }
+            await Shell.Current.DisplayAlert("Erreur", ex.Message, "OK");
         }
-
-
-        // Projet
-        if (SelectedProjet != null)
-        {
-            Task.ProjetId = SelectedProjet.Id;
-        }
-
-        // Étiquettes
-        // Charger les étiquettes actuelles liées à la tâche
-        await _context.Entry(Task).Collection(t => t.Etiquettes).LoadAsync();
-
-        // Détacher toutes les anciennes étiquettes de la tâche
-        Task.Etiquettes.Clear();
-
-        // Créer la liste finale des étiquettes
-        var nomsEtiquettes = EtiquetteInput
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(n => n.Trim().ToLower())
-            .Where(n => !string.IsNullOrWhiteSpace(n))
-            .Distinct();
-
-        var etiquettesFinales = new List<Etiquette>();
-
-        foreach (var nom in nomsEtiquettes)
-        {
-            var existante = await _context.Etiquettes.FirstOrDefaultAsync(e => e.Nom.ToLower() == nom);
-
-            if (existante != null)
-            {
-                etiquettesFinales.Add(existante);
-            }
-            else
-            {
-                var nouvelle = new Etiquette { Nom = nom };
-                _context.Etiquettes.Add(nouvelle); // Ajout dans le contexte
-                etiquettesFinales.Add(nouvelle);
-            }
-        }
-
-        // Associer les étiquettes finales à la tâche
-        foreach (var etiquette in etiquettesFinales)
-        {
-            var local = _context.Etiquettes.Local.FirstOrDefault(e => e.Id == etiquette.Id);
-            if (local != null)
-            {
-                // Utilise l'instance déjà suivie
-                Task.Etiquettes.Add(local);
-            }
-            else
-            {
-                Task.Etiquettes.Add(etiquette);
-            }
-        }
-
-
-
-
-
-        await _taskService.UpdateTask(Task);
-        await _context.SaveChangesAsync(); // C'est très important pour un truc 
-
-        await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
     }
-
     [RelayCommand]
     private async Task Cancel()
     {
@@ -194,40 +200,37 @@ public partial class EditTaskViewModel : ObservableObject
 
     public async Task LoadTaskAsync(int taskId)
     {
-        var loadedTask = await _taskService.GetTaskById(taskId);
+        // Charger la tâche avec toutes les relations nécessaires
+        var loadedTask = await _context.Taches
+            .Include(t => t.Auteur)
+            .Include(t => t.Realisateur)
+            .Include(t => t.SousTaches)
+            .Include(t => t.Commentaires)
+            .Include(t => t.Etiquettes)
+            .Include(t => t.Projet)
+            .FirstOrDefaultAsync(t => t.Id == taskId);
+
         if (loadedTask != null)
         {
             Task = loadedTask;
 
+            // Initialiser les étiquettes
             EtiquetteInput = string.Join(", ", Task.Etiquettes?.Select(e => e.Nom) ?? new List<string>());
 
-            // ICI on assosi explicitement les valeurs au bon objet de la liste parce que sinon ça ne marche pas 
+            // Initialiser les autres propriétés
             Task.Statut = Statuses.FirstOrDefault(s => s == Task.Statut);
             Task.Priorite = Priorities.FirstOrDefault(p => p == Task.Priorite);
             Task.Categorie = Categories.FirstOrDefault(c => c == Task.Categorie);
+
+            // Initialiser le projet sélectionné
+
+                //SelectedProjet = Projets.FirstOrDefault(p => p.Id == Task.Projet.Id);
+                // Charger les projets
+            var projetService = new ProjetService(_context); 
+            Projets = await projetService.GetAllProjects();
+
+            SelectedProjet = Projets.FirstOrDefault(p => p.Id == Task.ProjetId);
+            
         }
-
-        await LoadProjectAndEtiquettes();
-    }
-
-    public async Task LoadProjectAndEtiquettes()
-    {
-        // Charger les projets
-        var projetService = new ProjetService(_context); // Ou injecte-le par constructeur
-        Projets = await projetService.GetAllProjects();
-
-        SelectedProjet = Projets.FirstOrDefault(p => p.Id == Task.ProjetId);
-
-        //// Charger les étiquettes disponibles
-        //Etiquettes = await _context.Etiquettes.ToListAsync();
-
-        //// Prendre les étiquettes de la tâche
-        //if (Task.Etiquettes != null)
-        //{
-        //    SelectedEtiquettes = Etiquettes
-        //        .Where(e => Task.Etiquettes.Any(te => te.Id == e.Id))
-        //        .Cast<object>()
-        //        .ToList();
-        //}
     }
 }
