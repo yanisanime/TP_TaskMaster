@@ -14,6 +14,8 @@ public class Utilisateur
     public string Email { get; set; } = string.Empty;
     public string MotDePasse { get; set; } = string.Empty; // ICI  le mot de passe en clair
 
+    public string FullName => $"{Prenom} {Nom}";
+
     // Relations
     public ICollection<Tache>? TachesCreees { get; set; }
     public ICollection<Tache>? TachesARealiser { get; set; }
