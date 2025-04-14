@@ -73,7 +73,14 @@ public partial class AddEditTaskPage : ContentPage
 
         if (BindingContext is AddEditTaskViewModel viewModel)
         {
-            await viewModel.InitializeDataAsync();
+            try
+            {
+                await viewModel.InitializeDataAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Erreur d'initialisation", ex.Message, "OK");
+            }
         }
     }
 
