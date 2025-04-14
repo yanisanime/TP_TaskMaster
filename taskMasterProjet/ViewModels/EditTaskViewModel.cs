@@ -18,6 +18,20 @@ public partial class EditTaskViewModel : ObservableObject
     public int UserId => _userSession.CurrentUser.Id;
 
 
+    [ObservableProperty]
+    private List<Etiquette> etiquettes = new();
+
+    [ObservableProperty]
+    private string etiquetteInput = string.Empty;
+
+    [ObservableProperty]
+    private List<Projet> projets = new();
+
+    [ObservableProperty]
+    private Projet selectedProjet;
+
+
+
 
 
     /// Propriétés pour la gestion des commentaires
@@ -108,8 +122,66 @@ public partial class EditTaskViewModel : ObservableObject
             }
         }
 
+
+        // Projet
+        if (SelectedProjet != null)
+        {
+            Task.ProjetId = SelectedProjet.Id;
+        }
+
+        // Étiquettes
+        // Charger les étiquettes actuelles liées à la tâche
+        await _context.Entry(Task).Collection(t => t.Etiquettes).LoadAsync();
+
+        // Détacher toutes les anciennes étiquettes de la tâche
+        Task.Etiquettes.Clear();
+
+        // Créer la liste finale des étiquettes
+        var nomsEtiquettes = EtiquetteInput
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => n.Trim().ToLower())
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Distinct();
+
+        var etiquettesFinales = new List<Etiquette>();
+
+        foreach (var nom in nomsEtiquettes)
+        {
+            var existante = await _context.Etiquettes.FirstOrDefaultAsync(e => e.Nom.ToLower() == nom);
+
+            if (existante != null)
+            {
+                etiquettesFinales.Add(existante);
+            }
+            else
+            {
+                var nouvelle = new Etiquette { Nom = nom };
+                _context.Etiquettes.Add(nouvelle); // Ajout dans le contexte
+                etiquettesFinales.Add(nouvelle);
+            }
+        }
+
+        // Associer les étiquettes finales à la tâche
+        foreach (var etiquette in etiquettesFinales)
+        {
+            var local = _context.Etiquettes.Local.FirstOrDefault(e => e.Id == etiquette.Id);
+            if (local != null)
+            {
+                // Utilise l'instance déjà suivie
+                Task.Etiquettes.Add(local);
+            }
+            else
+            {
+                Task.Etiquettes.Add(etiquette);
+            }
+        }
+
+
+
+
+
         await _taskService.UpdateTask(Task);
-        await _context.SaveChangesAsync(); // Important ici car tu manipules directement le contexte
+        await _context.SaveChangesAsync(); // C'est très important pour un truc 
 
         await Shell.Current.GoToAsync($"//{nameof(DashboardPage)}");
     }
@@ -127,10 +199,35 @@ public partial class EditTaskViewModel : ObservableObject
         {
             Task = loadedTask;
 
+            EtiquetteInput = string.Join(", ", Task.Etiquettes?.Select(e => e.Nom) ?? new List<string>());
+
             // ICI on assosi explicitement les valeurs au bon objet de la liste parce que sinon ça ne marche pas 
             Task.Statut = Statuses.FirstOrDefault(s => s == Task.Statut);
             Task.Priorite = Priorities.FirstOrDefault(p => p == Task.Priorite);
             Task.Categorie = Categories.FirstOrDefault(c => c == Task.Categorie);
         }
+
+        await LoadProjectAndEtiquettes();
+    }
+
+    public async Task LoadProjectAndEtiquettes()
+    {
+        // Charger les projets
+        var projetService = new ProjetService(_context); // Ou injecte-le par constructeur
+        Projets = await projetService.GetAllProjects();
+
+        SelectedProjet = Projets.FirstOrDefault(p => p.Id == Task.ProjetId);
+
+        //// Charger les étiquettes disponibles
+        //Etiquettes = await _context.Etiquettes.ToListAsync();
+
+        //// Prendre les étiquettes de la tâche
+        //if (Task.Etiquettes != null)
+        //{
+        //    SelectedEtiquettes = Etiquettes
+        //        .Where(e => Task.Etiquettes.Any(te => te.Id == e.Id))
+        //        .Cast<object>()
+        //        .ToList();
+        //}
     }
 }

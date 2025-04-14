@@ -48,6 +48,21 @@
                     ItemDisplayBinding="{Binding FullName}"
                     SelectedItem="{Binding SelectedAssignee}"/>
 
+            <!-- Projet -->
+            <Label Text="Projet associé" FontSize="14" HorizontalOptions="Start"/>
+            <Picker Title="Projet"
+                    ItemsSource="{Binding Projets}"
+                    ItemDisplayBinding="{Binding Nom}"
+                    SelectedItem="{Binding SelectedProjet}"/>
+
+            <!-- Étiquettes -->
+            <Label Text="Étiquettes (séparées par des virgules)" 
+                   FontSize="14" 
+                   HorizontalOptions="Start"/>
+            <Entry Placeholder="ex: urgent, maison, perso"
+                   Text="{Binding EtiquetteInput}" />
+
+
 
             <!-- Section Commentaires -->
             <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
