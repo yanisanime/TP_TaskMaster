@@ -34,7 +34,7 @@ public class ProjetService
     //avoir le projet par le nom
     public async Task<Projet> GetProjectByName(string name)
     {
-        return await _context.Projets
-            .FirstOrDefaultAsync(p => p.Nom == name);
+        return await _context.Projets.FirstOrDefaultAsync(p => p.Nom == name);
     }
+
 }

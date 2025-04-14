@@ -61,6 +61,14 @@
                     ItemDisplayBinding="{Binding Nom}"
                     SelectedItem="{Binding SelectedProject}"/>-->
 
+            <!-- Etiquettes -->
+            <Label Text="Étiquettes (séparées par des virgules)" 
+                   FontSize="14" 
+                   HorizontalOptions="Start"/>
+            <Entry Placeholder="ex: urgent, maison, perso"
+                   Text="{Binding EtiquetteInput}" />
+
+
 
             <!-- Section Commentaires -->
             <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>

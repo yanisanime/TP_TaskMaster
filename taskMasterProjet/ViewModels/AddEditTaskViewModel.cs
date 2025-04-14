@@ -25,6 +25,10 @@ public partial class AddEditTaskViewModel : ObservableObject
     [ObservableProperty]
     private string selectedProjectName = string.Empty;
 
+    //pour les etiquettes 
+    [ObservableProperty]
+    private string etiquetteInput = string.Empty;
+
 
 
     public List<string> Statuses { get; } = new() { "À faire", "En cours", "Terminée", "Annulée" };
@@ -120,6 +124,37 @@ public partial class AddEditTaskViewModel : ObservableObject
                 }
                 Task.ProjetId = projet.Id;
             }
+
+
+            // Traitement des étiquettes
+            if (!string.IsNullOrWhiteSpace(EtiquetteInput))
+            {
+                var nomsEtiquettes = EtiquetteInput
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(n => n.Trim().ToLower())
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .Distinct();
+
+                var etiquettes = new List<Etiquette>();
+
+                foreach (var nom in nomsEtiquettes)
+                {
+                    var existante = await _context.Etiquettes.FirstOrDefaultAsync(e => e.Nom.ToLower() == nom);
+                    if (existante != null)
+                    {
+                        etiquettes.Add(existante);
+                    }
+                    else
+                    {
+                        var nouvelle = new Etiquette { Nom = nom };
+                        etiquettes.Add(nouvelle);
+                        _context.Etiquettes.Add(nouvelle); // pour créer l’étiquette en base
+                    }
+                }
+
+                Task.Etiquettes = etiquettes;
+            }
+
 
             // Sauvegarde
             await _taskService.CreateTask(Task);

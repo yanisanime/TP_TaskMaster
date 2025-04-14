@@ -80,7 +80,7 @@
             <Button Text="Créer un projet" 
             Command="{Binding AddProjectCommand}"
             Grid.Column="1"
-            BackgroundColor="{StaticResource Secondary}"
+            BackgroundColor="{StaticResource Primary}"
             TextColor="White"/>
         </Grid>
     </Grid>
