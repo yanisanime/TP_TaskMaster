@@ -50,11 +50,14 @@
                     SelectedItem="{Binding SelectedAssignee}"/>
 
             <!-- Projet associé -->
-            <Label Text="Projet associé" 
-                   FontSize="14" 
+            <Label Text="Projet associé"
+                   FontSize="14"
                    HorizontalOptions="Start"
                    VerticalOptions="Start"/>
-            <Entry Placeholder="Nom d'un projet" Text="{Binding SelectedProjectName}" />
+            <Picker Title="Sélectionner un projet"
+                    ItemsSource="{Binding Projects}"
+                    ItemDisplayBinding="{Binding Nom}"
+                    SelectedItem="{Binding SelectedProject}" />
 
             <!--<Picker Title="Sélectionner un projet (optionnel)"
                     ItemsSource="{Binding Projects}"

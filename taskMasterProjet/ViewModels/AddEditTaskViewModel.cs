@@ -23,7 +23,10 @@ public partial class AddEditTaskViewModel : ObservableObject
 
     //pour la gestion de projet
     [ObservableProperty]
-    private string selectedProjectName = string.Empty;
+    private List<Projet> projects = new();
+
+    [ObservableProperty]
+    private Projet? selectedProject;
 
     //pour les etiquettes 
     [ObservableProperty]
@@ -67,6 +70,11 @@ public partial class AddEditTaskViewModel : ObservableObject
         var projetService = new ProjetService(_context);
         TeamMembers = await projetService.GetAllUsers();
         SelectedAssignee = TeamMembers.FirstOrDefault(u => u.Id == Task.RealisateurId);
+
+        // Charger tous les projets disponibles
+        Projects = await _projetService.GetAllProjects();
+        SelectedProject = Projects.FirstOrDefault(p => p.Id == Task.ProjetId);
+
     }
 
     [RelayCommand]
@@ -117,16 +125,21 @@ public partial class AddEditTaskViewModel : ObservableObject
 
 
             // Associer le projet sélectionné
-            if (!string.IsNullOrWhiteSpace(SelectedProjectName))
+            //if (!string.IsNullOrWhiteSpace(SelectedProjectName))
+            //{
+            //    var projet = await _projetService.GetProjectByName(SelectedProjectName);
+            //    if (projet == null)
+            //    {
+            //        await Shell.Current.DisplayAlert("Erreur", $"Le projet '{SelectedProjectName}' n'existe pas.", "OK");
+            //        return;
+            //    }
+            //    Task.ProjetId = projet.Id;
+            //}
+            if (SelectedProject != null)
             {
-                var projet = await _projetService.GetProjectByName(SelectedProjectName);
-                if (projet == null)
-                {
-                    await Shell.Current.DisplayAlert("Erreur", $"Le projet '{SelectedProjectName}' n'existe pas.", "OK");
-                    return;
-                }
-                Task.ProjetId = projet.Id;
+                Task.ProjetId = SelectedProject.Id;
             }
+
 
 
             // Traitement des étiquettes
