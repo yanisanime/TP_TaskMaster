@@ -71,9 +71,9 @@ public partial class AddEditTaskPage : ContentPage
     {
         base.OnAppearing();
 
-        if (BindingContext is AddEditTaskViewModel vm)
+        if (BindingContext is AddEditTaskViewModel viewModel)
         {
-            await vm.InitializeDataAsync();
+            await viewModel.InitializeDataAsync();
         }
     }
 

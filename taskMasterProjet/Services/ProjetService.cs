@@ -37,4 +37,11 @@ public class ProjetService
         return await _context.Projets.FirstOrDefaultAsync(p => p.Nom == name);
     }
 
+
+
+    //Fonction pour avoir la liste de tout les utilisateur de la base 
+    public async Task<List<Utilisateur>> GetAllUsers()
+    {
+        return await _context.Utilisateurs.ToListAsync();
+    }
 }

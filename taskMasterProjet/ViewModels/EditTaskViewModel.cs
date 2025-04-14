@@ -30,6 +30,10 @@ public partial class EditTaskViewModel : ObservableObject
     [ObservableProperty]
     private Projet selectedProjet;
 
+    //pour le réalisateur
+    [ObservableProperty]
+    private List<Utilisateur> teamMembers = new();
+
 
 
 
@@ -145,6 +149,12 @@ public partial class EditTaskViewModel : ObservableObject
             }
 
 
+            if (SelectedAssignee != null)
+            {
+                Task.RealisateurId = SelectedAssignee.Id;
+            }
+
+
             // Projet
             if (SelectedProjet != null)
             {
@@ -230,7 +240,9 @@ public partial class EditTaskViewModel : ObservableObject
             Projets = await projetService.GetAllProjects();
 
             SelectedProjet = Projets.FirstOrDefault(p => p.Id == Task.ProjetId);
-            
+
+            TeamMembers = await projetService.GetAllUsers();
+            SelectedAssignee = TeamMembers.FirstOrDefault(u => u.Id == Task.RealisateurId);
         }
     }
 }

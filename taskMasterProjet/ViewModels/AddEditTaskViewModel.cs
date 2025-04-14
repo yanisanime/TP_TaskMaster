@@ -29,12 +29,15 @@ public partial class AddEditTaskViewModel : ObservableObject
     [ObservableProperty]
     private string etiquetteInput = string.Empty;
 
+    //pour le réalisateur
+    [ObservableProperty]
+    private List<Utilisateur> teamMembers = new();
+
 
 
     public List<string> Statuses { get; } = new() { "À faire", "En cours", "Terminée", "Annulée" };
     public List<string> Priorities { get; } = new() { "Basse", "Moyenne", "Haute", "Critique" };
     public List<string> Categories { get; } = new() { "Perso", "Travail", "Projet" };
-    public List<Utilisateur> TeamMembers { get; private set; } = new();
     public DateTime Today { get; } = DateTime.Today;
 
 
@@ -49,21 +52,21 @@ public partial class AddEditTaskViewModel : ObservableObject
         _context = context;
         _projetService = projetService;
         _projetService = projetService;
-        InitializeDataAsync();
+        //InitializeDataAsync();
     }
 
     public async Task InitializeDataAsync()
     {
-        // Charger les membres de l'équipe (exemple simple)
-        //TeamMembers = await _context.Utilisateurs.ToListAsync();
-        //OnPropertyChanged(nameof(TeamMembers));
-
-
         // Valeurs par défaut
         Task.Statut = "À faire";
         Task.Priorite = "Moyenne";
         Task.Categorie = "Perso";
         Task.AuteurId = _userSession.CurrentUser.Id;
+
+        // Charger les membres de l'équipe (hors utilisateur connecté)
+        var projetService = new ProjetService(_context);
+        TeamMembers = await projetService.GetAllUsers();
+        SelectedAssignee = TeamMembers.FirstOrDefault(u => u.Id == Task.RealisateurId);
     }
 
     [RelayCommand]
