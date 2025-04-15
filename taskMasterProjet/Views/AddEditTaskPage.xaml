@@ -72,8 +72,19 @@
                    Text="{Binding EtiquetteInput}" />
 
 
+			<!-- Section Sous-tâches -->
+			<Label Text="Sous-tâches" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
 
-            <!-- Section Commentaires -->
+			<VerticalStackLayout x:Name="SousTachesLayout" Spacing="10">
+				<!-- Les champs de sous-tâches seront ajoutés ici dynamiquement -->
+			</VerticalStackLayout>
+
+			<Button Text="Ajouter une sous-tâche" Clicked="OnAjouterSousTacheClicked" />
+
+
+
+
+			<!-- Section Commentaires -->
             <Label Text="Commentaires" FontAttributes="Bold" FontSize="Medium" Margin="0,20,0,0"/>
 
             <VerticalStackLayout x:Name="CommentairesLayout" Spacing="10">

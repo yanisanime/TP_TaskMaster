@@ -37,6 +37,15 @@ public partial class AddEditTaskViewModel : ObservableObject
     private List<Utilisateur> teamMembers = new();
 
 
+    //pour les sous tache
+    [ObservableProperty]
+    private List<string> sousTacheStatuts = new() { "À faire", "En cours", "Terminée", "Annulée" };
+
+    // Pour stocker les sous-tâches temporaires
+    public List<SousTache> SousTachesTemporaires { get; set; } = new();
+
+
+
 
     public List<string> Statuses { get; } = new() { "À faire", "En cours", "Terminée", "Annulée" };
     public List<string> Priorities { get; } = new() { "Basse", "Moyenne", "Haute", "Critique" };
@@ -125,16 +134,6 @@ public partial class AddEditTaskViewModel : ObservableObject
 
 
             // Associer le projet sélectionné
-            //if (!string.IsNullOrWhiteSpace(SelectedProjectName))
-            //{
-            //    var projet = await _projetService.GetProjectByName(SelectedProjectName);
-            //    if (projet == null)
-            //    {
-            //        await Shell.Current.DisplayAlert("Erreur", $"Le projet '{SelectedProjectName}' n'existe pas.", "OK");
-            //        return;
-            //    }
-            //    Task.ProjetId = projet.Id;
-            //}
             if (SelectedProject != null)
             {
                 Task.ProjetId = SelectedProject.Id;
@@ -169,6 +168,13 @@ public partial class AddEditTaskViewModel : ObservableObject
                 }
 
                 Task.Etiquettes = etiquettes;
+            }
+
+
+            // Ajouter les sous-tâches à la tâche principale
+            if (SousTachesTemporaires.Any())
+            {
+                Task.SousTaches = SousTachesTemporaires;
             }
 
 
