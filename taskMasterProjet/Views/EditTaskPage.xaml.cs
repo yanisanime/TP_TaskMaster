@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using taskMasterProjet.ViewModels;
-using taskMasterProjet.Services; //pour la classe de gestion de com
+using taskMasterProjet.Services; //pour la classe de gestion de com et sous taches
 
 
 namespace taskMasterProjet.Views;
