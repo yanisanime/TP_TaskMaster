@@ -9,6 +9,8 @@ namespace taskMasterProjet.Views;
 public partial class EditTaskPage : ContentPage
 {
     private List<CommentaireEntry> _commentEntries = new();
+    private List<SousTacheEntry> _sousTacheEntries = new();
+
 
     public int TaskId { get; set; }
 
@@ -28,6 +30,8 @@ public partial class EditTaskPage : ContentPage
         // Chargez la tâche à partir de l'ID
         await _viewModel.LoadTaskAsync(TaskId);
         LoadCommentaires();
+        LoadSousTaches(); 
+
     }
 
     protected override async void OnDisappearing()
@@ -36,6 +40,7 @@ public partial class EditTaskPage : ContentPage
 
         // Passer les commentaires au ViewModel
         TransferCommentairesToViewModel();
+        TransferSousTachesToViewModel();
     }
 
     // Ajouter un commentaire
@@ -115,8 +120,10 @@ public partial class EditTaskPage : ContentPage
     /// Appelée lorsque le bouton "Enregistrer" est cliqué pour pouvoir faire des truc avec les commentaire avant de push vers le model
     private async void OnSaveClicked(object sender, EventArgs e)
     {
-        await Task.Delay(100);
+        await Task.Delay(100); //pârce que sinon ça pete un max
         TransferCommentairesToViewModel();
+        TransferSousTachesToViewModel();
+
 
         if (BindingContext is EditTaskViewModel vm)
         {
@@ -182,4 +189,164 @@ public partial class EditTaskPage : ContentPage
             }
         }
     }
+
+
+    private void OnAjouterSousTacheClicked(object sender, EventArgs e)
+    {
+        var titreEntry = new Entry { Placeholder = "Titre de la sous-tâche" };
+
+        var statutPicker = new Picker { Title = "Statut" };
+        statutPicker.ItemsSource = _viewModel.SousTacheStatuts;
+        statutPicker.SelectedIndex = 0;
+
+        var echeancePicker = new DatePicker
+        {
+            MinimumDate = DateTime.Today,
+            Format = "dd/MM/yyyy"
+        };
+
+        var deleteButton = new Button
+        {
+            Text = "Supprimer",
+            BackgroundColor = Colors.Red
+        };
+        deleteButton.Clicked += OnDeleteSousTacheClicked;
+
+        var sousTacheEntry = new SousTacheEntry
+        {
+            TitreEntry = titreEntry,
+            StatutPicker = statutPicker,
+            EcheancePicker = echeancePicker,
+            DeleteButton = deleteButton
+        };
+
+        _sousTacheEntries.Add(sousTacheEntry);
+
+        // Ajout à l'interface avec labels
+        SousTachesLayout.Children.Add(new Label { Text = "Titre:" });
+        SousTachesLayout.Children.Add(titreEntry);
+        SousTachesLayout.Children.Add(new Label { Text = "Statut:" });
+        SousTachesLayout.Children.Add(statutPicker);
+        SousTachesLayout.Children.Add(new Label { Text = "Échéance:" });
+        SousTachesLayout.Children.Add(echeancePicker);
+        SousTachesLayout.Children.Add(deleteButton);
+    }
+
+    private void OnDeleteSousTacheClicked(object sender, EventArgs e)
+    {
+        var button = sender as Button;
+        var entryToDelete = _sousTacheEntries.FirstOrDefault(x => x.DeleteButton == button);
+
+        if (entryToDelete != null)
+        {
+            // Si c'est une sous-tâche existante, la marquer pour suppression
+            if (entryToDelete.TitreEntry.BindingContext is SousTache existingSousTache)
+            {
+                _viewModel.SousTachesToDelete.Add(existingSousTache);
+            }
+
+            // Supprimer tous les contrôles associés
+            var index = SousTachesLayout.Children.IndexOf(entryToDelete.TitreEntry);
+            // Supprimer les labels et contrôles (en ordre inverse)
+            for (int i = 0; i < 7; i++) // 7 éléments par sous-tâche (3 labels + 3 contrôles + bouton)
+            {
+                if (index - i >= 0)
+                {
+                    SousTachesLayout.Children.RemoveAt(index - i);
+                }
+            }
+
+            _sousTacheEntries.Remove(entryToDelete);
+            TransferSousTachesToViewModel();
+        }
+    }
+
+    private void LoadSousTaches()
+    {
+        SousTachesLayout.Children.Clear();
+        _sousTacheEntries.Clear();
+
+        if (_viewModel.Task?.SousTaches != null)
+        {
+            foreach (var sousTache in _viewModel.Task.SousTaches)
+            {
+                var titreEntry = new Entry { Text = sousTache.Titre };
+                titreEntry.BindingContext = sousTache;
+
+                var statutPicker = new Picker { ItemsSource = _viewModel.SousTacheStatuts };
+                statutPicker.SelectedItem = sousTache.Statut;
+
+                var echeancePicker = new DatePicker
+                {
+                    Date = sousTache.Echeance ?? DateTime.Today,
+                    Format = "dd/MM/yyyy"
+                };
+
+                var deleteButton = new Button
+                {
+                    Text = "Supprimer",
+                    BackgroundColor = Colors.Red
+                };
+                deleteButton.Clicked += OnDeleteSousTacheClicked;
+
+                var entry = new SousTacheEntry
+                {
+                    TitreEntry = titreEntry,
+                    StatutPicker = statutPicker,
+                    EcheancePicker = echeancePicker,
+                    DeleteButton = deleteButton
+                };
+
+                _sousTacheEntries.Add(entry);
+
+                // Ajout à l'interface
+                SousTachesLayout.Children.Add(new Label { Text = "Titre:" });
+                SousTachesLayout.Children.Add(titreEntry);
+                SousTachesLayout.Children.Add(new Label { Text = "Statut:" });
+                SousTachesLayout.Children.Add(statutPicker);
+                SousTachesLayout.Children.Add(new Label { Text = "Échéance:" });
+                SousTachesLayout.Children.Add(echeancePicker);
+                SousTachesLayout.Children.Add(deleteButton);
+            }
+        }
+    }
+
+    private void TransferSousTachesToViewModel()
+    {
+        if (_viewModel.Task != null)
+        {
+            // Mettre à jour les sous-tâches existantes
+            foreach (var entry in _sousTacheEntries.Where(e => e.TitreEntry.BindingContext is SousTache))
+            {
+                var sousTache = (SousTache)entry.TitreEntry.BindingContext;
+                sousTache.Titre = entry.TitreEntry.Text;
+                sousTache.Statut = entry.StatutPicker.SelectedItem?.ToString() ?? "À faire";
+                sousTache.Echeance = entry.EcheancePicker.Date;
+            }
+
+            // Ajouter les nouvelles sous-tâches
+            var nouvellesSousTaches = _sousTacheEntries
+                .Where(e => e.TitreEntry.BindingContext == null && !string.IsNullOrWhiteSpace(e.TitreEntry.Text))
+                .Select(e => new SousTache
+                {
+                    Titre = e.TitreEntry.Text,
+                    Statut = e.StatutPicker.SelectedItem?.ToString() ?? "À faire",
+                    Echeance = e.EcheancePicker.Date,
+                    TacheId = _viewModel.Task.Id
+                }).ToList();
+
+            if (_viewModel.Task.SousTaches == null)
+            {
+                _viewModel.Task.SousTaches = nouvellesSousTaches;
+            }
+            else
+            {
+                foreach (var nouvelle in nouvellesSousTaches)
+                {
+                    _viewModel.Task.SousTaches.Add(nouvelle);
+                }
+            }
+        }
+    }
+
 }

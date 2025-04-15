@@ -35,6 +35,12 @@ public partial class EditTaskViewModel : ObservableObject
     private List<Utilisateur> teamMembers = new();
 
 
+    //pour la gestion des sous tache de mertgde
+    [ObservableProperty]
+    private List<string> sousTacheStatuts = new() { "À faire", "En cours", "Terminée", "Annulée" };
+
+    public List<SousTache> SousTachesToDelete { get; set; } = new();
+
 
 
 
@@ -213,6 +219,39 @@ public partial class EditTaskViewModel : ObservableObject
                         var nouvelleEtiquette = new Etiquette { Nom = nom };
                         _context.Etiquettes.Add(nouvelleEtiquette);
                         taskToUpdate.Etiquettes.Add(nouvelleEtiquette);
+                    }
+                }
+            }
+
+
+            // Gestion des sous-tâches
+            if (SousTachesToDelete != null && SousTachesToDelete.Any())
+            {
+                foreach (var sousTache in SousTachesToDelete)
+                {
+                    _context.SousTaches.Remove(sousTache);
+                }
+            }
+
+            // Mettre à jour les sous-tâches existantes
+            if (Task.SousTaches != null)
+            {
+                foreach (var sousTache in Task.SousTaches)
+                {
+                    if (sousTache.Id == 0) // Nouvelle sous-tâche
+                    {
+                        sousTache.TacheId = Task.Id;
+                        _context.SousTaches.Add(sousTache);
+                    }
+                    else // Sous-tâche existante
+                    {
+                        var existing = await _context.SousTaches.FindAsync(sousTache.Id);
+                        if (existing != null)
+                        {
+                            existing.Titre = sousTache.Titre;
+                            existing.Statut = sousTache.Statut;
+                            existing.Echeance = sousTache.Echeance;
+                        }
                     }
                 }
             }
