@@ -10,6 +10,8 @@ public partial class AddEditTaskPage : ContentPage
 {
     private List<CommentaireEntry> _commentEntries = new();
 
+    private List<SousTacheEntry> _sousTacheEntries = new();
+
     public AddEditTaskPage(AddEditTaskViewModel viewModel)
     {
         InitializeComponent();
@@ -65,6 +67,7 @@ public partial class AddEditTaskPage : ContentPage
 
         // Passer les commentaires au ViewModel
         TransferCommentairesToViewModel();
+        TransferSousTachesToViewModel();
     }
 
     protected override async void OnAppearing()
@@ -99,10 +102,104 @@ public partial class AddEditTaskPage : ContentPage
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         TransferCommentairesToViewModel();
+        TransferSousTachesToViewModel();
 
         if (BindingContext is AddEditTaskViewModel vm)
         {
             await vm.SaveCommand.ExecuteAsync(null);
         }
     }
+
+
+
+
+
+
+    private void OnAjouterSousTacheClicked(object sender, EventArgs e)
+    {
+        // Créer les contrôles pour une sous-tâche
+        var titreEntry = new Entry { Placeholder = "Titre de la sous-tâche" };
+        var statutPicker = new Picker { Title = "Statut" };
+        statutPicker.ItemsSource = (BindingContext as AddEditTaskViewModel)?.SousTacheStatuts;
+        statutPicker.SelectedIndex = 0;
+
+        var echeancePicker = new DatePicker
+        {
+            MinimumDate = DateTime.Today,
+            Format = "dd/MM/yyyy"
+        };
+
+        var deleteButton = new Button
+        {
+            Text = "Supprimer",
+            BackgroundColor = Colors.Red
+        };
+        deleteButton.Clicked += OnDeleteSousTacheClicked;
+
+        // Créer un objet SousTacheEntry
+        var sousTacheEntry = new SousTacheEntry
+        {
+            TitreEntry = titreEntry,
+            StatutPicker = statutPicker,
+            EcheancePicker = echeancePicker,
+            DeleteButton = deleteButton
+        };
+
+        // Ajouter à la liste
+        _sousTacheEntries.Add(sousTacheEntry);
+
+        // Ajouter à l'interface
+        SousTachesLayout.Children.Add(new Label { Text = "Titre:" });
+        SousTachesLayout.Children.Add(titreEntry);
+        SousTachesLayout.Children.Add(new Label { Text = "Statut:" });
+        SousTachesLayout.Children.Add(statutPicker);
+        SousTachesLayout.Children.Add(new Label { Text = "Échéance:" });
+        SousTachesLayout.Children.Add(echeancePicker);
+        SousTachesLayout.Children.Add(deleteButton);
+    }
+
+    private void OnDeleteSousTacheClicked(object sender, EventArgs e)
+    {
+        var button = sender as Button;
+        var sousTacheEntryToDelete = _sousTacheEntries.FirstOrDefault(entry => entry.DeleteButton == button);
+
+        if (sousTacheEntryToDelete != null)
+        {
+            // Supprimer tous les contrôles associés
+            SousTachesLayout.Children.Remove(sousTacheEntryToDelete.TitreEntry);
+            SousTachesLayout.Children.Remove(sousTacheEntryToDelete.StatutPicker);
+            SousTachesLayout.Children.Remove(sousTacheEntryToDelete.EcheancePicker);
+            SousTachesLayout.Children.Remove(sousTacheEntryToDelete.DeleteButton);
+
+            // Supprimer les labels associés (on suppose qu'ils sont dans l'ordre)
+            var index = SousTachesLayout.Children.IndexOf(sousTacheEntryToDelete.TitreEntry);
+            for (int i = 0; i < 3; i++) // 3 labels avant les contrôles
+            {
+                if (index - i - 1 >= 0)
+                {
+                    SousTachesLayout.Children.RemoveAt(index - i - 1);
+                }
+            }
+
+            _sousTacheEntries.Remove(sousTacheEntryToDelete);
+            TransferSousTachesToViewModel();
+        }
+    }
+
+    public void TransferSousTachesToViewModel()
+    {
+        if (BindingContext is AddEditTaskViewModel vm)
+        {
+            vm.SousTachesTemporaires = _sousTacheEntries
+                .Where(e => !string.IsNullOrWhiteSpace(e.TitreEntry.Text))
+                .Select(e => new SousTache
+                {
+                    Titre = e.TitreEntry.Text,
+                    Statut = e.StatutPicker.SelectedItem?.ToString() ?? "À faire",
+                    Echeance = e.EcheancePicker.Date
+                })
+                .ToList();
+        }
+    }
+
 }
