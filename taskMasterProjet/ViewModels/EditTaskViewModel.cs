@@ -104,11 +104,15 @@ public partial class EditTaskViewModel : ObservableObject
             .Where(c => c.TacheId == Task.Id)
             .ToListAsync();
 
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
 
             //poru chaque commentaire on affiche une fenetre de dialogue avec le contenu pour debug
-            foreach (var commentaire in commentairesExistants)
+            foreach (var commentaire in CommentaireTextes)
             {
-                await Shell.Current.DisplayAlert("Debug", $"Commentaire : {commentaire.Contenu}", "OK");
+                await Shell.Current.DisplayAlert("Debug", $"Commentaire : {commentaire}", "OK");
             }
 
             // Supprimer les commentaires marqués pour suppression
@@ -124,29 +128,48 @@ public partial class EditTaskViewModel : ObservableObject
                 }
             }
 
-            // Mettre à jour ou ajouter les commentaires
-            foreach (var commentaire in Task.Commentaires)
+            // Ajouter les nouveaux commentaires depuis CommentaireTextes
+            foreach (var texte in CommentaireTextes)
             {
-                // On vérif d'abord si le commentaire existe déjà dans la base de données
-                var commentaireDansDb = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
-
-                if (commentaireDansDb != null)
+                // Vérifier que ce n'est pas un commentaire existant déjà suivi
+                bool estCommentaireExistant = false;
+                if (Task.Commentaires != null)
                 {
-                    await Shell.Current.DisplayAlert("Erreur", "Le commentaire exite déjà", "OK");
-                    //mise à jour des commentaires existants
-                    commentaireDansDb.Contenu = commentaire.Contenu;
-                    commentaireDansDb.Date = DateTime.Now;
+                    estCommentaireExistant = Task.Commentaires.Any(c => c.Contenu == texte);
                 }
-                else
+
+                if (!estCommentaireExistant && !string.IsNullOrWhiteSpace(texte))
                 {
-                    await Shell.Current.DisplayAlert("Erreur", "Ajout d'un commentaire nouveau", "OK");
-                    // Ajout des nouveaux commentaires
-                    commentaire.TacheId = Task.Id;
-                    commentaire.AuteurId = _userSession.CurrentUser.Id;
-                    commentaire.Date = DateTime.Now;
-                    _context.Commentaires.Add(commentaire);
+                    var nouveauCommentaire = new Commentaire
+                    {
+                        TacheId = Task.Id,
+                        AuteurId = _userSession.CurrentUser.Id,
+                        Date = DateTime.Now,
+                        Contenu = texte
+                    };
+                    _context.Commentaires.Add(nouveauCommentaire);
                 }
             }
+
+            // Mettre à jour les commentaires existants
+            if (Task.Commentaires != null)
+            {
+                foreach (var commentaire in Task.Commentaires)
+                {
+                    var commentaireDansDb = commentairesExistants.FirstOrDefault(c => c.Id == commentaire.Id);
+                    if (commentaireDansDb != null)
+                    {
+                        commentaireDansDb.Contenu = commentaire.Contenu;
+                        // Pas besoin de mettre à jour la date si on ne modifie pas le contenu
+                    }
+                }
+            }
+
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
+            /**************************************************************************************************************************/
+
 
 
             if (SelectedAssignee != null)
@@ -202,6 +225,7 @@ public partial class EditTaskViewModel : ObservableObject
             await Shell.Current.DisplayAlert("Erreur", ex.Message, "OK");
         }
     }
+
     [RelayCommand]
     private async Task Cancel()
     {

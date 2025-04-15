@@ -42,10 +42,12 @@ public partial class EditTaskPage : ContentPage
     private void OnAjouterCommentaireClicked(object sender, EventArgs e)
     {
         var entry = new Entry { Placeholder = "Écrire un commentaire..." };
+        entry.TextChanged += OnCommentaireTextChanged; //Important, il faut lié sinon ça plante mochement !!!!
+
         var deleteButton = new Button
         {
             Text = "Supprimer",
-            BackgroundColor = Colors.Red, // Couleur rouge
+            BackgroundColor = Colors.Red, // Couleur rouge pour le style joli
         };
         deleteButton.Clicked += OnDeleteCommentaireClicked;
 
@@ -64,7 +66,6 @@ public partial class EditTaskPage : ContentPage
         CommentairesLayout.Children.Add(deleteButton);
 
         TransferCommentairesToViewModel();
-
     }
 
 
@@ -100,13 +101,21 @@ public partial class EditTaskPage : ContentPage
             vm.CommentaireTextes = _commentEntries
                 .Where(e => !string.IsNullOrWhiteSpace(e.Commentaire.Text))
                 .Select(e => e.Commentaire.Text!)
+                .Distinct() // Évite les doublons
                 .ToList();
+
+            //ICI pour debug, je veux afficher dans une boite de dialogue le contenu de chaque commentaire
+            foreach (var commentaire in vm.CommentaireTextes)
+            {
+                System.Diagnostics.Debug.WriteLine($"Commentaire Yanis : '{commentaire}'");
+            }
         }
     }
 
     /// Appelée lorsque le bouton "Enregistrer" est cliqué pour pouvoir faire des truc avec les commentaire avant de push vers le model
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        await Task.Delay(100);
         TransferCommentairesToViewModel();
 
         if (BindingContext is EditTaskViewModel vm)
@@ -114,7 +123,7 @@ public partial class EditTaskPage : ContentPage
             await vm.SaveChangesCommand.ExecuteAsync(null);
         }
     }
-    
+
     //méthode pour charger les commentaires 
     private void LoadCommentaires()
     {
@@ -127,6 +136,7 @@ public partial class EditTaskPage : ContentPage
             {
                 var entry = new Entry { Text = commentaire.Contenu };
                 entry.BindingContext = commentaire; // pour lier le commentaire à l'entrée
+                entry.TextChanged += OnCommentaireTextChanged; // Écoute les changements de texte
 
                 var deleteButton = new Button
                 {
@@ -150,4 +160,26 @@ public partial class EditTaskPage : ContentPage
         TransferCommentairesToViewModel();
     }
 
+    private void OnCommentaireTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var entry = sender as Entry;
+        if (entry != null)
+        {
+            var commentaireEntry = _commentEntries.FirstOrDefault(c => c.Commentaire == entry);
+            if (commentaireEntry != null)
+            {
+                // Mettre à jour le texte dans l'Entry
+                commentaireEntry.Commentaire.Text = e.NewTextValue;
+
+                // MAJ de l'objet Commentaire lié si c’est un existant
+                if (entry.BindingContext is Commentaire existingComment)
+                {
+                    existingComment.Contenu = e.NewTextValue;
+                }
+
+                // Mettre à jour le ViewModel sans ajouter de doublons
+                TransferCommentairesToViewModel();
+            }
+        }
+    }
 }
